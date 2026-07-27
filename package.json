@@ -24,29 +24,29 @@
   "devDependencies": {
     "@nuxt/eslint": "^1.16.0",
     "@nuxt/fonts": "^0.14.0",
-    "@tailwindcss/vite": "^4.3.2",
-    "@tanstack/query-persist-client-core": "^5.101.2",
-    "@tanstack/vue-query": "^5.101.2",
-    "@tanstack/vue-query-devtools": "^6.1.36",
+    "@tailwindcss/vite": "^4.3.3",
+    "@tanstack/query-persist-client-core": "^5.101.4",
+    "@tanstack/vue-query": "^5.101.4",
+    "@tanstack/vue-query-devtools": "^6.1.38",
     "@types/node": "^26.1.1",
     "@types/probe-image-size": "^7",
     "@vueuse/router": "^14.3.0",
-    "eslint": "^10.6.0",
+    "eslint": "^10.8.0",
     "husky": "^9.1.7",
     "nuxt": "^4.4.8",
-    "shadcn-nuxt": "^2.7.4",
+    "shadcn-nuxt": "^2.8.0",
     "sharp": "^0.35.3",
     "shiki": "^4.3.1",
-    "tailwindcss": "^4.3.2",
+    "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3",
     "vite": "^7",
     "vitest": "^4.1.10",
-    "vue": "^3.5.39",
-    "vue-router": "^5.1.0",
-    "vue-tsc": "^3.3.7"
+    "vue": "^3.5.40",
+    "vue-router": "^5.2.0",
+    "vue-tsc": "^3.3.8"
   },
   "dependencies": {
-    "@lucide/vue": "^1.23.0",
+    "@lucide/vue": "^1.27.0",
     "@nuxt/image": "^2.0.0",
     "@vueuse/core": "^14.3.0",
     "class-variance-authority": "^0.7.1",
@@ -59,7 +59,7 @@
     "zod": "^4.4.3"
   },
   "optionalDependencies": {
-    "lint-staged": "^17.0.8"
+    "lint-staged": "^17.2.0"
   },
   "packageManager": "yarn@4.1.0"
 }
