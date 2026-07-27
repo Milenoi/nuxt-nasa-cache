@@ -51,11 +51,14 @@ const heroVideoPoster = computed(() => {
     : undefined;
 });
 
-// Start the ambient hero video past its (often black) intro at a representative
-// frame, matching the gallery/detail thumbnails.
-const seekHeroPreview = (event: Event) => {
-  const video = event.target as HTMLVideoElement;
-  if (Number.isFinite(video.duration)) video.currentTime = video.duration * 0.25;
+// Start the ambient hero video on a representative frame; autoplay only when the
+// user hasn't asked for reduced motion (otherwise the still frame stands in).
+const onHeroLoaded = (event: Event) => {
+  seekVideoPreview(event);
+  const video = event.currentTarget as HTMLVideoElement;
+  const reducedMotion
+    = import.meta.client && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!reducedMotion) video.play().catch(() => {});
 };
 
 const ytId = (u: string) =>
@@ -129,13 +132,15 @@ const serverPill = computed(() => {
       <video
         v-if="heroVideo"
         :src="heroVideo"
-        autoplay
         muted
         loop
         playsinline
+        preload="auto"
         :poster="heroVideoPoster"
+        aria-hidden="true"
+        tabindex="-1"
         class="h-full w-full bg-[radial-gradient(circle_at_50%_35%,#1b1b22,#0b0b0e)] object-cover"
-        @loadedmetadata="seekHeroPreview"
+        @loadedmetadata="onHeroLoaded"
       />
       <iframe
         v-else-if="heroIframe"

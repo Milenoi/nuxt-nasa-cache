@@ -165,7 +165,10 @@ const paragraphs = computed(() => {
         />
       </div>
 
-      <!-- Video: direct media file, 16:9 reserved -->
+      <!-- Video: direct media file, 16:9 reserved. Unlike the gallery/hero
+           previews this plays from the start (it is the main content, not a
+           thumbnail) and autoplays regardless of reduced motion, since the user
+           opened the page to watch it. -->
       <div v-else-if="embed && embed.type === 'file'" class="relative aspect-video w-full">
         <video
           ref="detailVideo"
@@ -175,14 +178,14 @@ const paragraphs = computed(() => {
           muted
           loop
           playsinline
-          @volumechange="videoMuted = ($event.target as HTMLVideoElement).muted"
+          @volumechange="videoMuted = ($event.currentTarget as HTMLVideoElement).muted"
         />
         <!-- Top-right: the fixed cache footer overlaps the video's bottom edge
              once it scrolls into view, so a bottom-anchored control would hide
              behind it. -->
         <button
           type="button"
-          class="absolute right-3 top-3 z-10 grid size-10 place-items-center rounded-full border border-white/25 bg-[rgba(6,6,8,0.55)] text-white backdrop-blur-sm transition-colors hover:border-white/40 hover:bg-[rgba(6,6,8,0.78)]"
+          class="absolute right-3 top-3 z-10 grid size-10 place-items-center rounded-full border border-white/25 bg-[rgba(6,6,8,0.55)] text-white backdrop-blur-sm transition-colors hover:border-white/40 hover:bg-[rgba(6,6,8,0.78)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           :aria-label="videoMuted ? all.unmuteLabel : all.muteLabel"
           :aria-pressed="!videoMuted"
           @click="toggleMute"

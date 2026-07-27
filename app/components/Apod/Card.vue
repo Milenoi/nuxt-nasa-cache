@@ -11,33 +11,46 @@ const isVideo = computed(() => props.entry.mediaType === "video");
 
 const videoEl = ref<HTMLVideoElement | null>(null);
 const isPlaying = ref(false);
+// Bind the video src only once the card nears the viewport, so a long
+// video-filtered list never fetches every clip's metadata/frame at once.
+const shouldLoad = ref(false);
+const inView = ref(false);
 
-// Video thumbnail without a NASA thumbnail_url: seek past the (often black)
-// intro to a representative frame a quarter of the way in, so the card shows a
-// real preview instead of a black opening frame. The forced seek also makes the
-// browser fetch and decode that frame under preload="metadata".
-const seekToPreviewFrame = (event: Event) => {
-  const video = event.target as HTMLVideoElement;
-  if (Number.isFinite(video.duration)) video.currentTime = video.duration * 0.25;
+const prefersReducedMotion = () =>
+  import.meta.client
+  && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+// Autoplay (muted) only while the card is in view and the user hasn't asked for
+// reduced motion; pause otherwise. Called from the observer and once the video
+// has loaded (play() before the src is bound would just no-op).
+const syncPlayback = () => {
+  const video = videoEl.value;
+  if (!video) return;
+  if (inView.value && !prefersReducedMotion()) {
+    video.muted = true; // required for muted autoplay
+    video.play().catch(() => {}); // ignore autoplay rejections
+  }
+  else {
+    video.pause();
+  }
 };
 
-// Autoplay (muted) only while the card is in view, so the gallery never runs
-// every video at once; pause again when it scrolls out of view.
 useIntersectionObserver(
   videoEl,
-  ([entry]) => {
-    const video = videoEl.value;
-    if (!video) return;
-    if (entry?.isIntersecting) {
-      video.muted = true; // required for muted autoplay
-      video.play().catch(() => {}); // ignore autoplay rejections
-    }
-    else {
-      video.pause();
-    }
+  ([observerEntry]) => {
+    inView.value = observerEntry?.isIntersecting ?? false;
+    if (inView.value) shouldLoad.value = true;
+    syncPlayback();
   },
-  { threshold: 0.25 },
+  { threshold: 0.25, rootMargin: "200px" },
 );
+
+// On metadata load: seek past the (often black) intro to a representative frame,
+// then start playback if the card is in view (and motion is allowed).
+const onVideoLoaded = (event: Event) => {
+  seekVideoPreview(event);
+  syncPlayback();
+};
 // Thumbnail: the image itself, or a video's provided thumbnail.
 const imageSrc = computed(() =>
   props.entry.mediaType === "image"
@@ -73,13 +86,13 @@ const imageSrc = computed(() =>
       <video
         v-else-if="isVideo"
         ref="videoEl"
-        :src="entry.url"
+        :src="shouldLoad ? entry.url : undefined"
         class="h-full w-full bg-[radial-gradient(circle_at_50%_35%,#1b1b22,#0b0b0e)] object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110"
         preload="metadata"
         muted
         loop
         playsinline
-        @loadedmetadata="seekToPreviewFrame"
+        @loadedmetadata="onVideoLoaded"
         @play="isPlaying = true"
         @pause="isPlaying = false"
       />
