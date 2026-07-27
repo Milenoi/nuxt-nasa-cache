@@ -7,6 +7,15 @@ const props = defineProps<{ entry: ApodEntry; serverSource: ApodSource }>();
 
 const to = computed(() => `${menu.apod.link}/${props.entry.date}`);
 const isVideo = computed(() => props.entry.mediaType === "video");
+
+// Video thumbnail without a NASA thumbnail_url: seek past the (often black)
+// intro to a representative frame a quarter of the way in, so the card shows a
+// real preview instead of a black opening frame. The forced seek also makes the
+// browser fetch and decode that frame under preload="metadata".
+const seekToPreviewFrame = (event: Event) => {
+  const video = event.target as HTMLVideoElement;
+  if (Number.isFinite(video.duration)) video.currentTime = video.duration * 0.25;
+};
 // Thumbnail: the image itself, or a video's provided thumbnail.
 const imageSrc = computed(() =>
   props.entry.mediaType === "image"
@@ -35,16 +44,18 @@ const imageSrc = computed(() =>
         loading="lazy"
         class="h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110"
       />
-      <!-- Video without a NASA thumbnail: seek to 0.1s so iOS paints a first
-           frame as the preview; a dark gradient backs it if no frame renders
-           (iOS shows a plain <video> as pure black otherwise). -->
+      <!-- Video without a NASA thumbnail (NASA only returns thumbnail_url for
+           embedded videos, not its self-hosted .mp4 files): render the video and
+           seek to a representative frame (see seekToPreviewFrame) as the preview.
+           A dark gradient backs it while that frame loads / if none renders. -->
       <video
         v-else-if="isVideo"
-        :src="`${entry.url}#t=0.1`"
+        :src="entry.url"
         class="h-full w-full bg-[radial-gradient(circle_at_50%_35%,#1b1b22,#0b0b0e)] object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110"
         preload="metadata"
         muted
         playsinline
+        @loadedmetadata="seekToPreviewFrame"
       />
       <div v-else class="flex h-full w-full items-center justify-center text-text-faint">
         <Telescope class="h-8 w-8" />
