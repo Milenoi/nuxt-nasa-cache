@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ArrowLeft } from "@lucide/vue";
+import { ArrowLeft, Volume2, VolumeX } from "@lucide/vue";
 import { apod, common } from "~/assets/json/static-text.json";
 import type { ApodEntry } from "#shared/types";
 
@@ -41,6 +41,19 @@ useSeoMeta({
 const embed = computed(() =>
   item.value?.mediaType === "video" ? getApodEmbed(item.value.url) : null,
 );
+
+// Direct-file video: autoplay muted+looping (autoplay is only allowed muted),
+// with a custom control to turn the sound on/off — the native controls bar
+// would clash with the dark editorial design.
+const detailVideo = ref<HTMLVideoElement | null>(null);
+const videoMuted = ref(true);
+const toggleMute = () => {
+  const video = detailVideo.value;
+  if (!video) return;
+  video.muted = !video.muted;
+  // Unmuting a video whose volume was dragged to 0 would stay silent — restore it.
+  if (!video.muted && video.volume === 0) video.volume = 1;
+};
 
 // Reserve the image's real aspect ratio to avoid layout shift. We request a
 // 1200px-wide render and derive a proportional height from the probed
@@ -153,13 +166,30 @@ const paragraphs = computed(() => {
       </div>
 
       <!-- Video: direct media file, 16:9 reserved -->
-      <div v-else-if="embed && embed.type === 'file'" class="aspect-video w-full">
+      <div v-else-if="embed && embed.type === 'file'" class="relative aspect-video w-full">
         <video
+          ref="detailVideo"
           :src="embed.src"
           class="h-full w-full object-contain"
-          controls
+          autoplay
+          muted
+          loop
           playsinline
+          @volumechange="videoMuted = ($event.target as HTMLVideoElement).muted"
         />
+        <!-- Top-right: the fixed cache footer overlaps the video's bottom edge
+             once it scrolls into view, so a bottom-anchored control would hide
+             behind it. -->
+        <button
+          type="button"
+          class="absolute right-3 top-3 z-10 grid size-10 place-items-center rounded-full border border-white/25 bg-[rgba(6,6,8,0.55)] text-white backdrop-blur-sm transition-colors hover:border-white/40 hover:bg-[rgba(6,6,8,0.78)]"
+          :aria-label="videoMuted ? all.unmuteLabel : all.muteLabel"
+          :aria-pressed="!videoMuted"
+          @click="toggleMute"
+        >
+          <VolumeX v-if="videoMuted" class="h-5 w-5" />
+          <Volume2 v-else class="h-5 w-5" />
+        </button>
       </div>
 
       <!-- Fallback: link out to the source -->

@@ -143,7 +143,9 @@
       "filterImages": "Images",
       "filterVideos": "Videos",
       "viewSourceLabel": "View source",
-      "bothCaches": "Served through both caches"
+      "bothCaches": "Served through both caches",
+      "muteLabel": "Mute video",
+      "unmuteLabel": "Unmute video"
     },
     "listPage": {
       "title": "Astronomy Picture of the Day",

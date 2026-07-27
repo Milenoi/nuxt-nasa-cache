@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Play, Telescope } from "@lucide/vue";
+import { useIntersectionObserver } from "@vueuse/core";
 import { apod, menu } from "~/assets/json/static-text.json";
 import type { ApodEntry, ApodSource } from "#shared/types";
 
@@ -7,6 +8,9 @@ const props = defineProps<{ entry: ApodEntry; serverSource: ApodSource }>();
 
 const to = computed(() => `${menu.apod.link}/${props.entry.date}`);
 const isVideo = computed(() => props.entry.mediaType === "video");
+
+const videoEl = ref<HTMLVideoElement | null>(null);
+const isPlaying = ref(false);
 
 // Video thumbnail without a NASA thumbnail_url: seek past the (often black)
 // intro to a representative frame a quarter of the way in, so the card shows a
@@ -16,6 +20,24 @@ const seekToPreviewFrame = (event: Event) => {
   const video = event.target as HTMLVideoElement;
   if (Number.isFinite(video.duration)) video.currentTime = video.duration * 0.25;
 };
+
+// Autoplay (muted) only while the card is in view, so the gallery never runs
+// every video at once; pause again when it scrolls out of view.
+useIntersectionObserver(
+  videoEl,
+  ([entry]) => {
+    const video = videoEl.value;
+    if (!video) return;
+    if (entry?.isIntersecting) {
+      video.muted = true; // required for muted autoplay
+      video.play().catch(() => {}); // ignore autoplay rejections
+    }
+    else {
+      video.pause();
+    }
+  },
+  { threshold: 0.25 },
+);
 // Thumbnail: the image itself, or a video's provided thumbnail.
 const imageSrc = computed(() =>
   props.entry.mediaType === "image"
@@ -50,12 +72,16 @@ const imageSrc = computed(() =>
            A dark gradient backs it while that frame loads / if none renders. -->
       <video
         v-else-if="isVideo"
+        ref="videoEl"
         :src="entry.url"
         class="h-full w-full bg-[radial-gradient(circle_at_50%_35%,#1b1b22,#0b0b0e)] object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110"
         preload="metadata"
         muted
+        loop
         playsinline
         @loadedmetadata="seekToPreviewFrame"
+        @play="isPlaying = true"
+        @pause="isPlaying = false"
       />
       <div v-else class="flex h-full w-full items-center justify-center text-text-faint">
         <Telescope class="h-8 w-8" />
@@ -72,7 +98,10 @@ const imageSrc = computed(() =>
           <Play class="h-3 w-3 fill-white" />
           {{ apod.all.videoLabel }}
         </span>
-        <span class="pointer-events-none absolute inset-0 grid place-items-center">
+        <span
+          v-if="!isPlaying"
+          class="pointer-events-none absolute inset-0 grid place-items-center"
+        >
           <span
             class="grid size-[54px] place-items-center rounded-full border border-white/50 bg-[rgba(6,6,8,0.42)] text-white backdrop-blur-sm"
           >
