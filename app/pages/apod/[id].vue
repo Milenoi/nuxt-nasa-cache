@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ArrowLeft, Volume2, VolumeX } from "@lucide/vue";
+import { ArrowLeft, Pause, Play, Volume2, VolumeX } from "@lucide/vue";
 import { apod, common } from "~/assets/json/static-text.json";
 import type { ApodEntry } from "#shared/types";
 
@@ -42,17 +42,41 @@ const embed = computed(() =>
   item.value?.mediaType === "video" ? getApodEmbed(item.value.url) : null,
 );
 
-// Direct-file video: autoplay muted+looping (autoplay is only allowed muted),
-// with a custom control to turn the sound on/off — the native controls bar
-// would clash with the dark editorial design.
+// Direct-file video: autoplays muted (autoplay is only allowed muted) and drives
+// a custom control bar (play/pause, seek, mute) in the dark editorial style
+// instead of the native controls, which look different in every browser.
 const detailVideo = ref<HTMLVideoElement | null>(null);
 const videoMuted = ref(true);
+const isPaused = ref(false);
+const currentTime = ref(0);
+const duration = ref(0);
+
+const togglePlay = () => {
+  const video = detailVideo.value;
+  if (!video) return;
+  if (video.paused) video.play().catch(() => {});
+  else video.pause();
+};
+
 const toggleMute = () => {
   const video = detailVideo.value;
   if (!video) return;
   video.muted = !video.muted;
   // Unmuting a video whose volume was dragged to 0 would stay silent — restore it.
   if (!video.muted && video.volume === 0) video.volume = 1;
+};
+
+const onSeek = (event: Event) => {
+  const video = detailVideo.value;
+  if (video) video.currentTime = Number((event.currentTarget as HTMLInputElement).value);
+};
+
+// mm:ss, e.g. 72 -> "1:12".
+const formatMediaTime = (seconds: number): string => {
+  if (!Number.isFinite(seconds)) return "0:00";
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${secs.toString().padStart(2, "0")}`;
 };
 
 // Reserve the image's real aspect ratio to avoid layout shift. We request a
@@ -165,34 +189,70 @@ const paragraphs = computed(() => {
         />
       </div>
 
-      <!-- Video: direct media file, 16:9 reserved. Unlike the gallery/hero
-           previews this plays from the start (it is the main content, not a
-           thumbnail) and autoplays regardless of reduced motion, since the user
-           opened the page to watch it. -->
-      <div v-else-if="embed && embed.type === 'file'" class="relative aspect-video w-full">
-        <video
-          ref="detailVideo"
-          :src="embed.src"
-          class="h-full w-full object-contain"
-          autoplay
-          muted
-          loop
-          playsinline
-          @volumechange="videoMuted = ($event.currentTarget as HTMLVideoElement).muted"
-        />
-        <!-- Top-right: the fixed cache footer overlaps the video's bottom edge
-             once it scrolls into view, so a bottom-anchored control would hide
-             behind it. -->
-        <button
-          type="button"
-          class="absolute right-3 top-3 z-10 grid size-10 place-items-center rounded-full border border-white/25 bg-[rgba(6,6,8,0.55)] text-white backdrop-blur-sm transition-colors hover:border-white/40 hover:bg-[rgba(6,6,8,0.78)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          :aria-label="videoMuted ? all.unmuteLabel : all.muteLabel"
-          :aria-pressed="!videoMuted"
-          @click="toggleMute"
-        >
-          <VolumeX v-if="videoMuted" class="h-5 w-5" />
-          <Volume2 v-else class="h-5 w-5" />
-        </button>
+      <!-- Video: direct media file. Autoplays muted (autoplay is only allowed
+           muted) and, as the page's main content, plays from the start. The
+           custom control bar sits BELOW the frame, not overlaid: a bottom overlay
+           would hide behind the fixed cache footer once scrolled into view. -->
+      <div v-else-if="embed && embed.type === 'file'">
+        <div class="aspect-video w-full">
+          <video
+            ref="detailVideo"
+            :src="embed.src"
+            class="h-full w-full object-contain"
+            autoplay
+            muted
+            playsinline
+            @play="isPaused = false"
+            @pause="isPaused = true"
+            @loadedmetadata="duration = ($event.currentTarget as HTMLVideoElement).duration"
+            @durationchange="duration = ($event.currentTarget as HTMLVideoElement).duration"
+            @timeupdate="currentTime = ($event.currentTarget as HTMLVideoElement).currentTime"
+            @volumechange="videoMuted = ($event.currentTarget as HTMLVideoElement).muted"
+          />
+        </div>
+
+        <div class="flex items-center gap-3 border-t border-[#17171a] px-3 py-2.5 text-white">
+          <button
+            type="button"
+            class="grid size-9 shrink-0 place-items-center rounded-full text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            :aria-label="isPaused ? all.playLabel : all.pauseLabel"
+            @click="togglePlay"
+          >
+            <Play v-if="isPaused" class="h-5 w-5 fill-white" />
+            <Pause v-else class="h-5 w-5 fill-white" />
+          </button>
+
+          <span class="w-10 shrink-0 text-right text-xs tabular-nums text-text-muted">
+            {{ formatMediaTime(currentTime) }}
+          </span>
+
+          <input
+            type="range"
+            min="0"
+            :max="duration || 0"
+            step="0.1"
+            :value="currentTime"
+            :aria-label="all.seekLabel"
+            :aria-valuetext="`${formatMediaTime(currentTime)} / ${formatMediaTime(duration)}`"
+            class="flex-1 cursor-pointer accent-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            @input="onSeek"
+          >
+
+          <span class="w-10 shrink-0 text-xs tabular-nums text-text-muted">
+            {{ formatMediaTime(duration) }}
+          </span>
+
+          <button
+            type="button"
+            class="grid size-9 shrink-0 place-items-center rounded-full text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            :aria-label="videoMuted ? all.unmuteLabel : all.muteLabel"
+            :aria-pressed="!videoMuted"
+            @click="toggleMute"
+          >
+            <VolumeX v-if="videoMuted" class="h-5 w-5" />
+            <Volume2 v-else class="h-5 w-5" />
+          </button>
+        </div>
       </div>
 
       <!-- Fallback: link out to the source -->

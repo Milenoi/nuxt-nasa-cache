@@ -145,7 +145,10 @@
       "viewSourceLabel": "View source",
       "bothCaches": "Served through both caches",
       "muteLabel": "Mute video",
-      "unmuteLabel": "Unmute video"
+      "unmuteLabel": "Unmute video",
+      "playLabel": "Play video",
+      "pauseLabel": "Pause video",
+      "seekLabel": "Seek video"
     },
     "listPage": {
       "title": "Astronomy Picture of the Day",
