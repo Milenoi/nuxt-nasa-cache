@@ -38,20 +38,25 @@ const heroImage = computed(() => {
   return entry.thumbnailUrl ?? "/images/apod.jpg";
 });
 
-// A raw <video poster> URL bypasses <NuxtImg>, so the static JPEG fallback would
-// ship at full size in a legacy format. Route it through the image pipeline
-// (IPX in dev, Netlify CDN in prod) so the poster is served as WebP, sized to
-// the hero instead of shipping the ~200 KiB source.
+// Video-hero poster: only when NASA actually provides a thumbnail. Its
+// self-hosted .mp4s carry none, so we skip the poster (the generic fallback photo
+// would flash an unrelated image before playback) and let the video paint its own
+// representative frame over a neutral dark stage. When a real thumbnail exists it
+// is routed through the image pipeline (IPX dev / Netlify CDN prod) as a sized WebP.
 const img = useImage();
-const heroPoster = computed(() =>
-  img(heroImage.value, {
-    width: 1280,
-    height: 720,
-    fit: "cover",
-    format: "webp",
-    quality: 70,
-  }),
-);
+const heroVideoPoster = computed(() => {
+  const thumb = latestApod.value?.thumbnailUrl;
+  return thumb
+    ? img(thumb, { width: 1280, height: 720, fit: "cover", format: "webp", quality: 70 })
+    : undefined;
+});
+
+// Start the ambient hero video past its (often black) intro at a representative
+// frame, matching the gallery/detail thumbnails.
+const seekHeroPreview = (event: Event) => {
+  const video = event.target as HTMLVideoElement;
+  if (Number.isFinite(video.duration)) video.currentTime = video.duration * 0.25;
+};
 
 const ytId = (u: string) =>
   u.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|watch\?v=|v\/))([\w-]{11})/)?.[1];
@@ -128,8 +133,9 @@ const serverPill = computed(() => {
         muted
         loop
         playsinline
-        :poster="heroPoster"
-        class="h-full w-full object-cover"
+        :poster="heroVideoPoster"
+        class="h-full w-full bg-[radial-gradient(circle_at_50%_35%,#1b1b22,#0b0b0e)] object-cover"
+        @loadedmetadata="seekHeroPreview"
       />
       <iframe
         v-else-if="heroIframe"
