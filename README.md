@@ -100,12 +100,33 @@ The dev/prod switch lives in `app/utils/getImageConfig.ts`. Remote image domains
 (`apod.nasa.gov`, YouTube thumbnails) are allowlisted in **both** the Nuxt image
 config **and** `netlify.toml` (`remote_images`).
 
+Two rules keep the responsive part honest, because getting either wrong makes
+every device download the widest variant:
+
+- The `screens` ladder is **Tailwind's breakpoints minus 1px** — Nuxt Image emits
+  `(max-width: …)` where Tailwind uses `(min-width: …)`, so a plain `1024` would
+  still serve the `md` width at exactly 1024px. With the offset, `lg:` in a
+  `sizes` prop covers exactly the viewports where Tailwind's `lg:` classes apply.
+- Every `<NuxtImg>` states an explicit **px width per breakpoint**, measured
+  against the real layout (the gallery's column width, the detail page's media
+  column). A bare `vw` value does not resolve against `screens` and collapses the
+  srcset to a single candidate.
+
 ### Cache headers
 
 Static pages (`/`, `/about`, `/how`) send `Cache-Control: public, s-maxage=3600,
 stale-while-revalidate=86400` via `routeRules`, so Netlify's CDN serves them
-instantly and revalidates in the background. `/apod` stays SSR so its Redis/NASA
-indicator is always live.
+instantly and revalidates in the background. The APOD routes send **no**
+cache-control header at all, so Netlify forwards every request and their
+Redis/NASA indicator is always live.
+
+This is the only page-level caching in the project — no prerendering, no ISR. The
+rendered HTML is deliberately left alone: a page served from a cache cannot report
+which cache answered, because its badges are written at render time. That also
+explains the one rough edge: `/` shows the cache pills *and* carries the header,
+so on a warm CDN hit those pills are as old as the cached copy (up to an hour).
+It only affects a cold page load — navigating inside the app or using the footer
+controls refetches through `/api/apod`, which is never cached.
 
 ---
 
@@ -224,7 +245,8 @@ image-dimension probing. `getApodEmbed` is covered for its URL classification
   (`?type=`), with loading skeletons and per-card cache badges.
 - **`/apod/[date]`** — a single day; image, `<video>`, or embed depending on
   media type, with a two-column layout on large screens.
-- **`/how`** — the caching architecture as a timeline plus a usage guide.
+- **`/how`** — the caching architecture as a timeline, a usage guide, and a
+  "what this is not" section on the project's deliberate limits.
 - **`/about`** — a short project blurb and the tech-stack table.
 
 ## Deployment
@@ -239,7 +261,8 @@ auto-detected → SSR via serverless functions). To deploy your own copy:
 
 ## Continuous integration
 
-`.github/workflows/ci.yml` runs on every push / PR: **lint → typecheck → build**.
+`.github/workflows/ci.yml` runs on every push / PR: **lint → typecheck → test →
+build**.
 
 ---
 
