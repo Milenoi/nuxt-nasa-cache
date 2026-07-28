@@ -165,6 +165,20 @@ const steps = computed(() =>
           </div>
         </div>
       </div>
+
+        <!-- Scope: which caching this demo is about, and that the chain is a
+             teaching device rather than a recommended setup -->
+      <div class="mt-20 border-t border-white/8 pt-14 text-left md:text-center">
+        <h2 class="m-0 font-serif text-[clamp(28px,3.4vw,40px)] font-normal tracking-tight">
+          {{ how?.scopeHeading }}
+        </h2>
+        <p class="mt-3 max-w-[58ch] text-sm leading-relaxed text-text-secondary md:mx-auto">
+          {{ how?.scopeData }}
+        </p>
+        <p class="mt-4 max-w-[58ch] text-sm leading-relaxed text-text-secondary md:mx-auto">
+          {{ how?.scopeBlueprint }}
+        </p>
+      </div>
     </div>
   </section>
 </template>

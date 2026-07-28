@@ -184,6 +184,9 @@ export interface HowContent {
     guideHeading: string;
     guideLead: string;
     guide: { title: string; desc: string }[];
+    scopeHeading: string;
+    scopeData: string;
+    scopeBlueprint: string;
 }
 
 /**

@@ -70,7 +70,12 @@ export default defineNuxtConfig({
 
   routeRules: {
     // Static pages: let the CDN cache and revalidate them in the background.
-    // APOD routes stay SSR so the Redis/NASA cache indicator is always live.
+    // APOD routes stay SSR so the Redis/NASA cache indicator is always live —
+    // they send no cache-control at all, so Netlify forwards every request.
+    // Caveat: `/` shows the cache pills as well and DOES carry the header, so on
+    // a warm CDN hit those pills are as old as the cached copy (up to an hour).
+    // Acceptable for a demo — any in-app navigation or footer action refetches
+    // through /api/apod, which is never cached.
     "/": {
       headers: {
         "cache-control": "public, s-maxage=3600, stale-while-revalidate=86400",

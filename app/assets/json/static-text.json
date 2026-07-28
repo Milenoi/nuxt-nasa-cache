@@ -127,7 +127,10 @@
         "title": "Delete Nitro or Redis",
         "desc": "Empties a server layer. The badge flips instantly to the next layer down. Delete both and the next request goes all the way to NASA — a genuine, rate-limited cold start."
       }
-    ]
+    ],
+    "scopeHeading": "What this is not",
+    "scopeData": "Every layer here caches data on its way from NASA to the page. The rendered HTML is a separate question, answered per route: the three static pages let the CDN serve them for an hour, while the APOD routes allow nothing and are rendered per request — a cached page could not honestly report which cache answered, because its labels would be as old as the copy. Route rules, prerendering and ISR are real and useful layers, just not the ones this project is about.",
+    "scopeBlueprint": "The chain is also more elaborate than most projects need. A Nitro SWR cache in front of Redis earns its place here because you can watch a request stop at it and see what that saves; in production you would usually pick one server cache and move on. Read this as an X-ray of the layers, not as a blueprint to copy."
   },
   "about": {
     "tagline": "About",
