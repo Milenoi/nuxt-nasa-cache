@@ -22,10 +22,10 @@ const serverMark = computed(() => {
     <UiTooltipTrigger as-child>
       <span
         v-bind="$attrs"
-        class="inline-flex items-center gap-3 rounded-full border border-white/[0.12] bg-[rgba(6,6,8,0.6)] px-3.5 py-2 backdrop-blur-sm"
+        class="inline-flex items-center gap-3 rounded-full border border-white/12 bg-badge-bg px-3.5 py-2 backdrop-blur-sm"
       >
         <img src="/svg/marks/query.svg" alt="" width="24" height="24" class="h-5 w-auto">
-        <span class="h-5 w-px bg-white/[0.18]" />
+        <span class="h-5 w-px bg-white/18" />
         <img
           :src="serverMark"
           :width="getMarkSize(serverMark).width"

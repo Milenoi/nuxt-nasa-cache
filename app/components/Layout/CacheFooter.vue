@@ -130,7 +130,7 @@ const clearRedis = async () => {
 
 <template>
   <footer
-    class="fixed bottom-0 left-1/2 z-[60] w-full max-w-[1920px] -translate-x-1/2 border-t border-white/[0.08] bg-[rgba(7,7,9,0.74)] backdrop-blur-[18px] backdrop-saturate-[1.2]"
+    class="fixed bottom-0 left-1/2 z-[60] w-full max-w-[1920px] -translate-x-1/2 border-t border-white/8 bg-footer-bg backdrop-blur-[18px] backdrop-saturate-[1.2]"
   >
     <div
       class="container mx-auto flex flex-col items-start gap-3 px-5 py-3.5 md:px-8 xl:h-16 xl:flex-row xl:items-center xl:gap-4 xl:py-0"
@@ -142,7 +142,7 @@ const clearRedis = async () => {
             <template v-for="(node, i) in chain" :key="node.key">
               <span
                 class="inline-flex items-center gap-1.5 rounded-md px-1.5 py-1 transition-colors"
-                :class="node.key === activeLayer ? 'bg-white/[0.06]' : ''"
+                :class="node.key === activeLayer ? 'bg-white/6' : ''"
               >
                 <span
                   class="size-1.5 shrink-0 rounded-full transition-colors"
@@ -185,7 +185,7 @@ const clearRedis = async () => {
               <button
                 type="button"
                 :aria-label="`${footer?.invalidateLabel} ${footer?.vueQuery}`"
-                class="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-tanstack-border bg-tanstack-tint px-3 py-2 text-sm font-medium text-text-strong transition-all hover:border-[rgba(56,189,248,0.5)] hover:bg-[rgba(56,189,248,0.14)] sm:px-4"
+                class="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-tanstack-border bg-tanstack-tint px-3 py-2 text-sm font-medium text-text-strong transition-all hover:border-tanstack-border-strong hover:bg-tanstack-tint-strong sm:px-4"
                 @click="invalidateVueQuery"
               >
                 <img src="/svg/marks/query.svg" alt="" width="24" height="24" class="h-4 w-auto">
@@ -204,7 +204,7 @@ const clearRedis = async () => {
               <button
                 type="button"
                 :aria-label="`${footer?.deleteLabel} ${footer?.nitro}`"
-                class="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-nitro-border bg-nitro-tint px-3 py-2 text-sm font-medium text-nitro transition-all hover:border-[rgba(74,222,128,0.55)] hover:bg-[rgba(74,222,128,0.16)] sm:px-4"
+                class="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-nitro-border bg-nitro-tint px-3 py-2 text-sm font-medium text-nitro transition-all hover:border-nitro-border-strong hover:bg-nitro-tint-strong sm:px-4"
                 @click="clearNitro"
               >
                 <img src="/svg/marks/nitro.svg" alt="" width="24" height="24" class="h-4 w-auto">
@@ -218,7 +218,7 @@ const clearRedis = async () => {
               <button
                 type="button"
                 :aria-label="`${footer?.deleteLabel} ${footer?.redis}`"
-                class="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-redis-border bg-redis-tint px-3 py-2 text-sm font-medium text-[#f4b4b4] transition-all hover:border-[rgba(248,113,113,0.55)] hover:bg-[rgba(248,113,113,0.16)] sm:px-4"
+                class="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-redis-border bg-redis-tint px-3 py-2 text-sm font-medium text-redis-soft transition-all hover:border-redis-border-strong hover:bg-redis-tint-strong sm:px-4"
                 @click="clearRedis"
               >
                 <img src="/svg/marks/redis.svg" alt="" width="24" height="24" class="h-4 w-auto">

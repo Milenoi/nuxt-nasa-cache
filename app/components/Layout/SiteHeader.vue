@@ -38,7 +38,7 @@ watch(
     >
       <NuxtLink
         to="/"
-        class="font-serif text-[22px] tracking-[0.01em] text-white"
+        class="font-serif text-2xl tracking-[0.01em] text-white"
       >
         {{ content?.header.brand }}
       </NuxtLink>
@@ -70,15 +70,15 @@ watch(
         aria-label="Toggle menu"
         :aria-expanded="menuOpen"
         aria-controls="mobile-nav"
-        class="ml-auto flex h-[42px] w-[42px] items-center justify-center rounded-[10px] border border-white/[0.18] bg-white/[0.04] text-white backdrop-blur-[8px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:hidden"
+        class="ml-auto flex h-[42px] w-[42px] items-center justify-center rounded-[10px] border border-white/18 bg-white/4 text-white backdrop-blur-[8px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:hidden"
         @click="menuOpen = !menuOpen"
       >
         <span v-if="!menuOpen" class="relative block h-[22px] w-[22px]">
           <span
-            class="absolute inset-0 rounded-full border border-white/[0.28]"
+            class="absolute inset-0 rounded-full border border-white/28"
           />
           <span
-            class="absolute left-1/2 top-1/2 -ml-[3px] -mt-[3px] h-[6px] w-[6px] rounded-full bg-[#fafafa]"
+            class="absolute left-1/2 top-1/2 -ml-[3px] -mt-[3px] h-[6px] w-[6px] rounded-full bg-foreground"
           />
           <span class="absolute inset-0 animate-[orbit_3.2s_linear_infinite]">
             <span
@@ -86,7 +86,7 @@ watch(
             />
           </span>
         </span>
-        <span v-else class="text-[17px] leading-none">✕</span>
+        <span v-else class="text-lg leading-none">✕</span>
       </button>
     </nav>
 
@@ -99,13 +99,13 @@ watch(
     >
       <div
         v-if="menuOpen"
-        class="absolute inset-x-0 top-[76px] flex flex-col border-b border-white/[0.08] px-5 pb-[18px] pt-2 backdrop-blur-[16px] md:hidden bg-[radial-gradient(1px_1px_at_18%_32%,rgba(255,255,255,0.5),transparent),radial-gradient(1px_1px_at_68%_55%,rgba(255,255,255,0.4),transparent),radial-gradient(1.5px_1.5px_at_42%_78%,rgba(255,255,255,0.32),transparent),radial-gradient(1px_1px_at_85%_24%,rgba(255,255,255,0.35),transparent),rgba(6,6,8,0.97)]"
+        class="absolute inset-x-0 top-[76px] flex flex-col border-b border-white/8 px-5 pb-[18px] pt-2 backdrop-blur-[16px] md:hidden bg-[radial-gradient(1px_1px_at_18%_32%,rgba(255,255,255,0.5),transparent),radial-gradient(1px_1px_at_68%_55%,rgba(255,255,255,0.4),transparent),radial-gradient(1.5px_1.5px_at_42%_78%,rgba(255,255,255,0.32),transparent),radial-gradient(1px_1px_at_85%_24%,rgba(255,255,255,0.35),transparent),rgba(6,6,8,0.97)]"
       >
         <NuxtLink
           v-for="item in nav"
           :key="item.link"
           :to="item.link"
-          class="border-b border-white/[0.06] px-1 py-[14px] text-left text-base text-[#fafafa]"
+          class="border-b border-white/6 px-1 py-[14px] text-left text-base text-foreground"
         >
           {{ item.label }}
         </NuxtLink>

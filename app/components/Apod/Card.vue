@@ -64,7 +64,7 @@ const imageSrc = computed(() =>
 <template>
   <NuxtLink
     :to="to"
-    class="group flex h-full flex-col overflow-hidden rounded-2xl border border-[#17171a] bg-surface-card"
+    class="group flex h-full flex-col overflow-hidden rounded-2xl border border-muted bg-surface-card"
   >
     <div class="relative aspect-[3/2] shrink-0 overflow-hidden">
       <NuxtImg
@@ -106,7 +106,7 @@ const imageSrc = computed(() =>
       <!-- video overlays -->
       <template v-if="isVideo">
         <span
-          class="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full border border-white/[0.16] bg-[rgba(6,6,8,0.6)] px-2.5 py-1 text-[11px] font-medium text-white backdrop-blur-sm"
+          class="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full border border-white/16 bg-badge-bg px-2.5 py-1 text-xs font-medium text-white backdrop-blur-sm"
         >
           <Play class="h-3 w-3 fill-white" />
           {{ content?.apod.all.videoLabel }}
@@ -118,7 +118,7 @@ const imageSrc = computed(() =>
       <time :datetime="entry.date" class="mb-1.5 block text-xs text-text-faint">
         {{ entry.formattedDate }}
       </time>
-      <h3 class="text-[15px] font-medium leading-snug tracking-tight text-foreground">
+      <h3 class="text-sm font-medium leading-snug tracking-tight text-foreground">
         {{ entry.title }}
       </h3>
       <p v-if="entry.copyright" class="mt-2 truncate text-xs text-text-faint">

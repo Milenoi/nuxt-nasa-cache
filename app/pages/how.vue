@@ -29,10 +29,10 @@ type StepMeta = {
 // Visual bits per timeline step (order matches the chain, client → origin);
 // copy lives in static-text.json.
 const stepMeta: StepMeta[] = [
-    {img: "/svg/marks/query.svg", nodeBorder: "border-[rgba(56,189,248,0.35)]", roleClass: "text-tanstack"},
-    {img: "/svg/marks/nitro.svg", nodeBorder: "border-[rgba(74,222,128,0.35)]", roleClass: "text-nitro"},
-    {img: "/svg/marks/redis.svg", nodeBorder: "border-[rgba(248,113,113,0.35)]", roleClass: "text-redis"},
-    {img: "/svg/marks/nasa.svg", nodeBorder: "border-white/[0.14]", roleClass: "text-white/65"},
+    {img: "/svg/marks/query.svg", nodeBorder: "border-tanstack-border", roleClass: "text-tanstack"},
+    {img: "/svg/marks/nitro.svg", nodeBorder: "border-nitro-border", roleClass: "text-nitro"},
+    {img: "/svg/marks/redis.svg", nodeBorder: "border-redis-border", roleClass: "text-redis"},
+    {img: "/svg/marks/nasa.svg", nodeBorder: "border-white/14", roleClass: "text-white/65"},
 ];
 
 type Snippet = { key: string; file: string; html: string };
@@ -52,7 +52,7 @@ const steps = computed(() =>
       class="container mx-auto min-h-screen px-5 pb-40 pt-32 md:px-8 animate-[fadeUp_0.4s_ease]"
   >
     <div class="text-left md:text-center">
-      <div class="mb-3 text-[15px] font-medium tracking-[0.01em] text-text-muted">
+      <div class="mb-3 text-sm font-medium tracking-[0.01em] text-text-muted">
         {{ how?.tagline }}
       </div>
       <h1
@@ -91,13 +91,13 @@ const steps = computed(() =>
             <!-- text -->
           <div class="pb-8">
             <div class="mb-1.5 flex items-center gap-3">
-              <span class="text-[17px] font-medium">{{ step.name }}</span>
-              <span class="text-[11px]" :class="step.meta.roleClass">
+              <span class="text-lg font-medium">{{ step.name }}</span>
+              <span class="text-xs" :class="step.meta.roleClass">
                 {{ step.role }}
               </span>
             </div>
             <p
-                class="m-0 max-w-[48ch] text-[14.5px] leading-relaxed text-text-secondary"
+                class="m-0 max-w-[48ch] text-sm leading-relaxed text-text-secondary"
             >
               {{ step.desc }}
             </p>
@@ -105,7 +105,7 @@ const steps = computed(() =>
                 :href="step.href"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="mt-2 inline-flex items-center text-[13px] font-medium text-text-muted transition-colors hover:text-foreground"
+                class="mt-2 inline-flex items-center text-sm font-medium text-text-muted transition-colors hover:text-foreground"
             >
               {{ how?.docsLabel }}
             </a>
@@ -113,7 +113,7 @@ const steps = computed(() =>
               <!-- Real code for this layer, collapsed by default -->
             <Collapsible v-if="step.snippet" v-slot="{ open }" class="group mt-4">
               <CollapsibleTrigger
-                  class="inline-flex items-center gap-1.5 rounded-md text-[13px] font-medium text-text-muted transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  class="inline-flex items-center gap-1.5 rounded-md text-sm font-medium text-text-muted transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 <Code2 class="size-3.5" aria-hidden="true"/>
                 <span>{{ open ? how?.codeHide : how?.codeShow }}</span>
@@ -127,13 +127,13 @@ const steps = computed(() =>
                     class="mt-3 overflow-hidden rounded-xl border border-white/8 bg-surface-panel"
                 >
                   <figcaption
-                      class="flex items-center gap-2 border-b border-white/6 px-4 py-2 font-mono text-[12px] text-text-muted"
+                      class="flex items-center gap-2 border-b border-white/6 px-4 py-2 font-mono text-xs text-text-muted"
                   >
                     <span class="size-1.5 rounded-full bg-white/25"/>
                     {{ step.snippet.file }}
                   </figcaption>
                     <!-- eslint-disable-next-line vue/no-v-html -- Shiki output generated at build time from our own source -->
-                  <div class="code-panel overflow-x-auto p-4 text-[13px] leading-relaxed" v-html="step.snippet.html"/>
+                  <div class="code-panel overflow-x-auto p-4 text-sm leading-relaxed" v-html="step.snippet.html"/>
                 </figure>
               </CollapsibleContent>
             </Collapsible>
@@ -146,7 +146,7 @@ const steps = computed(() =>
         <h2 class="m-0 font-serif text-[clamp(28px,3.4vw,40px)] font-normal tracking-tight">
           {{ how?.guideHeading }}
         </h2>
-        <p class="mt-3 max-w-[52ch] text-[15px] leading-relaxed text-text-secondary md:mx-auto">
+        <p class="mt-3 max-w-[52ch] text-sm leading-relaxed text-text-secondary md:mx-auto">
           {{ how?.guideLead }}
         </p>
 
@@ -154,9 +154,9 @@ const steps = computed(() =>
           <div
               v-for="tip in how?.guide ?? []"
               :key="tip.title"
-              class="rounded-2xl border border-[#17171a] bg-surface-card p-6 text-left"
+              class="rounded-2xl border border-muted bg-surface-card p-6 text-left"
           >
-            <div class="mb-2 text-[15px] font-medium text-foreground">
+            <div class="mb-2 text-sm font-medium text-foreground">
               {{ tip.title }}
             </div>
             <p class="m-0 text-sm leading-relaxed text-text-secondary">

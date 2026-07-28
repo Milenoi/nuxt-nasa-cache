@@ -121,7 +121,7 @@ const paragraphs = computed(() => {
       {{ common?.backLabel }}
     </NuxtLink>
 
-    <div class="mb-3 text-[15px] font-medium tracking-[0.01em] text-text-muted">
+    <div class="mb-3 text-sm font-medium tracking-[0.01em] text-text-muted">
       {{ listPage?.title }}
     </div>
     <h1
@@ -138,7 +138,7 @@ const paragraphs = computed(() => {
      <div>
       <!-- Media -->
       <div
-        class="relative overflow-hidden rounded-2xl border border-[#17171a] bg-surface-card"
+        class="relative overflow-hidden rounded-2xl border border-muted bg-surface-card"
       >
         <ApodCacheBadge
         :server-source="serverSource"
@@ -212,7 +212,7 @@ const paragraphs = computed(() => {
           />
         </div>
 
-        <div class="flex items-center gap-3 border-t border-[#17171a] px-3 py-2.5 text-white">
+        <div class="flex items-center gap-3 border-t border-muted px-3 py-2.5 text-white">
           <button
             type="button"
             class="grid size-9 shrink-0 place-items-center rounded-full text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -262,7 +262,7 @@ const paragraphs = computed(() => {
           :href="item.url"
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-flex items-center gap-2 rounded-lg border border-white/[0.16] bg-white/[0.03] px-5 py-3 text-sm font-medium transition-colors hover:border-white/30 hover:bg-white/[0.09]"
+          class="inline-flex items-center gap-2 rounded-lg border border-white/16 bg-white/3 px-5 py-3 text-sm font-medium transition-colors hover:border-white/30 hover:bg-white/9"
         >
           {{ all?.viewSourceLabel }} ↗
         </a>
@@ -274,7 +274,7 @@ const paragraphs = computed(() => {
        <p
          v-for="(para, i) in paragraphs"
          :key="i"
-         class="text-[15px] leading-relaxed text-text-secondary"
+         class="text-sm leading-relaxed text-text-secondary"
        >
          {{ para }}
        </p>

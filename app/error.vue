@@ -57,7 +57,7 @@ const handleClearError = () => clearError({ redirect: "/" });
 
     <main class="relative z-10 flex flex-1 items-center justify-center px-5 text-center">
       <div>
-        <p class="mb-4 text-[15px] font-medium tracking-[0.01em] text-text-muted">
+        <p class="mb-4 text-sm font-medium tracking-[0.01em] text-text-muted">
           {{ errorPage.eyebrow }}
         </p>
         <h1
@@ -70,7 +70,7 @@ const handleClearError = () => clearError({ redirect: "/" });
         </p>
         <button
           type="button"
-          class="mt-8 inline-flex items-center gap-2 rounded-lg border border-white/[0.16] bg-white/[0.03] px-5 py-3 text-sm font-medium transition-colors hover:border-white/30 hover:bg-white/[0.09] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          class="mt-8 inline-flex items-center gap-2 rounded-lg border border-white/16 bg-white/3 px-5 py-3 text-sm font-medium transition-colors hover:border-white/30 hover:bg-white/9 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           @click="handleClearError"
         >
           <ArrowLeft class="h-4 w-4" />

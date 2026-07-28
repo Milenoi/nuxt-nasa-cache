@@ -19,7 +19,7 @@ const prediction = computed(() => {
 
 <template>
   <div
-    class="fixed inset-0 z-[100] flex items-center justify-center bg-[rgba(5,5,6,0.82)] backdrop-blur-[6px]"
+    class="fixed inset-0 z-[100] flex items-center justify-center bg-loading-overlay backdrop-blur-[6px]"
   >
     <div class="flex flex-col items-center gap-7">
       <!-- Orbital system: glowing core + two satellites + twinkling stars -->
@@ -34,7 +34,7 @@ const prediction = computed(() => {
           <span class="absolute left-1/2 top-0 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white shadow-[0_0_10px_#fff]" />
         </div>
         <!-- inner orbit (blue satellite, reversed) -->
-        <div class="absolute inset-[18px] rounded-full border border-white/[0.06] [animation:orbit_2.6s_linear_infinite_reverse]">
+        <div class="absolute inset-[18px] rounded-full border border-white/6 [animation:orbit_2.6s_linear_infinite_reverse]">
           <span class="absolute left-1/2 top-0 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-tanstack shadow-[0_0_8px_#38bdf8]" />
         </div>
         <!-- glowing core -->

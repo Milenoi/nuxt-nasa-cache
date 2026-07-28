@@ -29,7 +29,7 @@ const enabled = computed(() => route.path !== "/");
         v-if="enabled && visible"
         type="button"
         aria-label="Scroll to top"
-        class="fixed bottom-[84px] right-5 z-50 grid size-11 place-items-center rounded-full border border-white/[0.14] bg-[rgba(10,12,18,0.62)] text-foreground backdrop-blur-md transition-colors hover:border-white/30 hover:bg-white/[0.12] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:right-8"
+        class="fixed bottom-[84px] right-5 z-50 grid size-11 place-items-center rounded-full border border-white/14 bg-surface-glass text-foreground backdrop-blur-md transition-colors hover:border-white/30 hover:bg-white/12 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:right-8"
         @click="scrollTop"
       >
         <ArrowUp class="h-5 w-5" />

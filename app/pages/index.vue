@@ -128,7 +128,7 @@ const serverPill = computed(() => {
           <!-- client cache layer -->
           <div
               v-if="fromClientCache"
-              class="inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[12.5px] font-medium backdrop-blur-[10px] text-shadow-none"
+              class="inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-medium backdrop-blur-[10px] text-shadow-none"
               :class="clientPill.cls"
           >
             <img
@@ -143,7 +143,7 @@ const serverPill = computed(() => {
           </div>
             <!-- server source layer -->
           <div
-              class="inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[12.5px] font-medium backdrop-blur-[10px] text-shadow-none"
+              class="inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-medium backdrop-blur-[10px] text-shadow-none"
               :class="serverPill.cls"
           >
             <img
@@ -159,7 +159,7 @@ const serverPill = computed(() => {
         </div>
 
         <div
-            class="mb-5.5 text-[15px] font-medium tracking-[0.01em] text-white/72 [text-shadow:0_1px_18px_rgba(0,0,0,0.55)]"
+            class="mb-5.5 text-sm font-medium tracking-[0.01em] text-white/72 [text-shadow:0_1px_18px_rgba(0,0,0,0.55)]"
         >
           {{ hero?.tagline }}
           <template v-if="latestApod?.formattedDate">

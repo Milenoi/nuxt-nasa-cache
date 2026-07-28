@@ -75,6 +75,22 @@
   --nasa-pill-border: rgba(255, 255, 255, 0.4);
   --nasa-pill-text: #fafafa;
 
+  /* Frosted surfaces (glass panels / overlays) */
+  --badge-bg: rgba(6, 6, 8, 0.6);
+  --footer-bg: rgba(7, 7, 9, 0.74);
+  --loading-overlay: rgba(5, 5, 6, 0.82);
+  --surface-glass: rgba(10, 12, 18, 0.62);
+
+  /* Per-layer button hover states (stronger than the resting border/tint) */
+  --tanstack-border-strong: rgba(56, 189, 248, 0.5);
+  --tanstack-tint-strong: rgba(56, 189, 248, 0.14);
+  --nitro-border-strong: rgba(74, 222, 128, 0.55);
+  --nitro-tint-strong: rgba(74, 222, 128, 0.16);
+  --redis-border-strong: rgba(248, 113, 113, 0.55);
+  --redis-tint-strong: rgba(248, 113, 113, 0.16);
+  /* Softer red for the Redis button label (full --redis is too saturated here) */
+  --redis-soft: #f4b4b4;
+
   /* Fonts (self-hosted by @nuxt/fonts) */
   --font-sans: "Schibsted Grotesk", ui-sans-serif, system-ui, sans-serif;
   --serif: "Newsreader", ui-serif, serif;
@@ -136,6 +152,17 @@
   --color-nasa-pill: var(--nasa-pill);
   --color-nasa-pill-border: var(--nasa-pill-border);
   --color-nasa-pill-text: var(--nasa-pill-text);
+  --color-badge-bg: var(--badge-bg);
+  --color-footer-bg: var(--footer-bg);
+  --color-loading-overlay: var(--loading-overlay);
+  --color-surface-glass: var(--surface-glass);
+  --color-tanstack-border-strong: var(--tanstack-border-strong);
+  --color-tanstack-tint-strong: var(--tanstack-tint-strong);
+  --color-nitro-border-strong: var(--nitro-border-strong);
+  --color-nitro-tint-strong: var(--nitro-tint-strong);
+  --color-redis-border-strong: var(--redis-border-strong);
+  --color-redis-tint-strong: var(--redis-tint-strong);
+  --color-redis-soft: var(--redis-soft);
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);

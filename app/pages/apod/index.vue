@@ -44,7 +44,7 @@ const filteredEntries = computed(() => {
     <!-- Header: tagline + heading, with the segmented media filter -->
     <div class="mb-10 flex flex-wrap items-end justify-between gap-4">
       <div>
-        <div class="mb-3 text-[15px] font-medium tracking-[0.01em] text-text-muted">
+        <div class="mb-3 text-sm font-medium tracking-[0.01em] text-text-muted">
           {{ listPage?.title }}
         </div>
         <h1
@@ -57,14 +57,14 @@ const filteredEntries = computed(() => {
       <div
         role="group"
         aria-label="Filter by media type"
-        class="inline-flex items-center gap-1 rounded-[11px] border border-[#1c1c20] bg-[#0e0e11] p-1"
+        class="inline-flex items-center gap-1 rounded-[11px] border border-border bg-surface-panel p-1"
       >
         <button
           v-for="f in filters"
           :key="f.value"
           type="button"
           :aria-pressed="mediaFilter === f.value"
-          class="rounded-lg px-4 py-2 text-[13px] font-medium leading-none transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          class="rounded-lg px-4 py-2 text-sm font-medium leading-none transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           :class="
             mediaFilter === f.value
               ? 'bg-accent text-foreground'
@@ -85,7 +85,7 @@ const filteredEntries = computed(() => {
       <div
         v-for="n in 6"
         :key="n"
-        class="overflow-hidden rounded-2xl border border-[#17171a] bg-surface-card"
+        class="overflow-hidden rounded-2xl border border-muted bg-surface-card"
       >
         <UiSkeleton class="aspect-[3/2] w-full rounded-none" />
         <div class="space-y-2 p-4">

@@ -34,7 +34,7 @@ const sourceLabel: Record<ContentSource, string> = {
       class="container mx-auto min-h-screen px-5 pb-40 pt-32 md:px-8 animate-[fadeUp_0.4s_ease]"
   >
     <div v-if="about" class="text-left md:text-center">
-      <div class="mb-3 text-[15px] font-medium tracking-[0.01em] text-text-muted">
+      <div class="mb-3 text-sm font-medium tracking-[0.01em] text-text-muted">
         {{ about.tagline }}
       </div>
       <h1
@@ -46,7 +46,7 @@ const sourceLabel: Record<ContentSource, string> = {
       <p class="mb-5 max-w-[56ch] text-base leading-relaxed text-text-body md:mx-auto">
         {{ about.lead1 }}
       </p>
-      <p class="max-w-[56ch] text-[15px] leading-relaxed text-text-secondary md:mx-auto">
+      <p class="max-w-[56ch] text-sm leading-relaxed text-text-secondary md:mx-auto">
         {{ about.lead2 }}
       </p>
 
@@ -57,10 +57,10 @@ const sourceLabel: Record<ContentSource, string> = {
         <div
             v-for="row in about.techStack"
             :key="row.label"
-            class="flex justify-between gap-4 border-b border-white/[0.07] py-4"
+            class="flex justify-between gap-4 border-b border-white/7 py-4"
         >
           <dt class="text-sm text-text-muted">{{ row.label }}</dt>
-          <dd class="m-0 text-right text-[14.5px] text-text-strong">
+          <dd class="m-0 text-right text-sm text-text-strong">
             {{ row.value }}
           </dd>
         </div>
@@ -71,7 +71,7 @@ const sourceLabel: Record<ContentSource, string> = {
             :href="githubUrl"
             target="_blank"
             rel="noopener noreferrer"
-            class="mt-10 inline-flex items-center gap-2 rounded-lg border border-white/16 bg-white/3 px-5 py-3 text-sm font-medium transition-colors hover:border-white/30 hover:bg-white/[0.09]"
+            class="mt-10 inline-flex items-center gap-2 rounded-lg border border-white/16 bg-white/3 px-5 py-3 text-sm font-medium transition-colors hover:border-white/30 hover:bg-white/9"
         >
           {{ about.cta }}
         </a>
