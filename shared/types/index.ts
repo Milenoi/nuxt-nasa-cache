@@ -130,6 +130,7 @@ export interface FooterContent {
     invalidateLabel: string;
     deleteLabel: string;
     vueQuery: string;
+    vueQueryShort: string;
     nitro: string;
     redis: string;
     nasa: string;

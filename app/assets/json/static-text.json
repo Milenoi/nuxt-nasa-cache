@@ -47,6 +47,7 @@
     "invalidateLabel": "Invalidate:",
     "deleteLabel": "Delete:",
     "vueQuery": "Vue Query",
+    "vueQueryShort": "Vue Q",
     "nitro": "Nitro",
     "redis": "Redis",
     "nasa": "NASA",

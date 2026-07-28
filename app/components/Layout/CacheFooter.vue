@@ -70,10 +70,12 @@ const activeLayer = computed<ApodSource>(() => activeServerSource.value);
 // The chain, from client (front) to origin (back). NASA is the origin and is
 // always available — it can't be emptied.
 const chain = computed(() => [
-  { key: "client", label: footer.value?.vueQuery, full: vueQueryFull.value, dot: "bg-tanstack" },
-  { key: "nitro", label: footer.value?.nitro, full: serverStatus.value.nitro, dot: "bg-nitro" },
-  { key: "redis", label: footer.value?.redis, full: serverStatus.value.redis, dot: "bg-redis" },
-  { key: "nasa", label: footer.value?.nasa, full: true, dot: "bg-white/70" },
+  // `short` is only different for Vue Query (the longest label); on the smallest
+  // screens the chain shows it so the row + timing fit on one line.
+  { key: "client", label: footer.value?.vueQuery, short: footer.value?.vueQueryShort, full: vueQueryFull.value, dot: "bg-tanstack" },
+  { key: "nitro", label: footer.value?.nitro, short: footer.value?.nitro, full: serverStatus.value.nitro, dot: "bg-nitro" },
+  { key: "redis", label: footer.value?.redis, short: footer.value?.redis, full: serverStatus.value.redis, dot: "bg-redis" },
+  { key: "nasa", label: footer.value?.nasa, short: footer.value?.nasa, full: true, dot: "bg-white/70" },
 ]);
 
 // Layer 1 — Vue Query (client): INVALIDATE. Marks the client cache stale and
@@ -137,7 +139,7 @@ const clearRedis = async () => {
     >
       <!-- Left: the cache chain with live full/empty dots + active highlight -->
       <ClientOnly>
-        <div class="flex max-w-full flex-nowrap items-center justify-start gap-x-2 overflow-x-auto">
+        <div class="flex flex-nowrap items-center justify-start gap-x-2">
           <div class="flex items-center gap-1">
             <template v-for="(node, i) in chain" :key="node.key">
               <span
@@ -152,7 +154,8 @@ const clearRedis = async () => {
                   class="whitespace-nowrap text-xs"
                   :class="node.key === activeLayer ? 'text-foreground' : 'text-text-dim'"
                 >
-                  {{ node.label }}
+                  <span class="sm:hidden">{{ node.short }}</span>
+                  <span class="hidden sm:inline">{{ node.label }}</span>
                 </span>
               </span>
               <span v-if="i < chain.length - 1" class="text-text-dim/50">→</span>
