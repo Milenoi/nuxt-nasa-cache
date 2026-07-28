@@ -61,6 +61,20 @@
   --nitro-tint: rgba(74, 222, 128, 0.08);
   --redis-online: #34d399;
 
+  /* Hero cache pills: a frosted dark bg + accent border + light text per layer */
+  --tanstack-pill: rgba(6, 16, 28, 0.62);
+  --tanstack-pill-border: rgba(56, 189, 248, 0.45);
+  --tanstack-pill-text: #7dd3fc;
+  --nitro-pill: rgba(6, 20, 12, 0.62);
+  --nitro-pill-border: rgba(74, 222, 128, 0.45);
+  --nitro-pill-text: #86efac;
+  --redis-pill: rgba(20, 6, 6, 0.62);
+  --redis-pill-border: rgba(248, 113, 113, 0.45);
+  --redis-pill-text: #fca5a5;
+  --nasa-pill: rgba(10, 12, 18, 0.62);
+  --nasa-pill-border: rgba(255, 255, 255, 0.4);
+  --nasa-pill-text: #fafafa;
+
   /* Fonts (self-hosted by @nuxt/fonts) */
   --font-sans: "Schibsted Grotesk", ui-sans-serif, system-ui, sans-serif;
   --serif: "Newsreader", ui-serif, serif;
@@ -110,6 +124,18 @@
   --color-nitro-border: var(--nitro-border);
   --color-nitro-tint: var(--nitro-tint);
   --color-redis-online: var(--redis-online);
+  --color-tanstack-pill: var(--tanstack-pill);
+  --color-tanstack-pill-border: var(--tanstack-pill-border);
+  --color-tanstack-pill-text: var(--tanstack-pill-text);
+  --color-nitro-pill: var(--nitro-pill);
+  --color-nitro-pill-border: var(--nitro-pill-border);
+  --color-nitro-pill-text: var(--nitro-pill-text);
+  --color-redis-pill: var(--redis-pill);
+  --color-redis-pill-border: var(--redis-pill-border);
+  --color-redis-pill-text: var(--redis-pill-text);
+  --color-nasa-pill: var(--nasa-pill);
+  --color-nasa-pill-border: var(--nasa-pill-border);
+  --color-nasa-pill-text: var(--nasa-pill-text);
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);

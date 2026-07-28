@@ -33,7 +33,7 @@ const clientPill = computed(() => ({
     label: hero.value?.client,
     layer: hero.value?.clientLayer,
     mark: "/svg/marks/query.svg",
-    cls: "bg-[rgba(6,16,28,0.62)] border-[rgba(56,189,248,0.45)] text-[#7dd3fc]",
+    cls: "bg-tanstack-pill border-tanstack-pill-border text-tanstack-pill-text",
 }));
 
 const serverPill = computed(() => {
@@ -42,7 +42,7 @@ const serverPill = computed(() => {
             label: hero.value?.serverNitro,
             layer: hero.value?.serverNitroLayer,
             mark: "/svg/marks/nitro.svg",
-            cls: "bg-[rgba(6,20,12,0.62)] border-[rgba(74,222,128,0.45)] text-[#86efac]",
+            cls: "bg-nitro-pill border-nitro-pill-border text-nitro-pill-text",
         };
     }
     if (serverSource.value === "redis") {
@@ -50,14 +50,14 @@ const serverPill = computed(() => {
             label: hero.value?.serverRedis,
             layer: hero.value?.serverRedisLayer,
             mark: "/svg/marks/redis.svg",
-            cls: "bg-[rgba(20,6,6,0.62)] border-[rgba(248,113,113,0.45)] text-[#fca5a5]",
+            cls: "bg-redis-pill border-redis-pill-border text-redis-pill-text",
         };
     }
     return {
         label: hero.value?.serverNasa,
         layer: hero.value?.serverNasaLayer,
         mark: "/svg/marks/nasa.svg",
-        cls: "bg-[rgba(10,12,18,0.62)] border-[rgba(255,255,255,0.4)] text-[#fafafa]",
+        cls: "bg-nasa-pill border-nasa-pill-border text-nasa-pill-text",
     };
 });
 </script>

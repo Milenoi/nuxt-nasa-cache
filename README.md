@@ -3,7 +3,8 @@
 A **Nuxt 4** demo that shows how to make a slow, rate-limited third-party API
 feel instant by layering caches around it. It fetches NASA's **Astronomy Picture
 of the Day (APOD)**, validates and normalizes it on the server, and serves it
-through **Redis** (server cache) and **TanStack Vue Query** (client cache), with
+through a fall-through **cache chain** — **TanStack Vue Query** (client), a
+**Nitro** stale-while-revalidate cache and **Redis** on the server — with
 **Netlify's Image CDN** handling image delivery. The UI is a custom, dark-only
 editorial design built on **shadcn-vue + Tailwind v4**.
 
@@ -33,30 +34,41 @@ editorial design built on **shadcn-vue + Tailwind v4**.
 ### Data flow
 
 ```
-Browser ──▶ /api/apod (Nuxt server route)
-                │  1. look up Redis
-                │  2. hit  → return cached JSON (flagged redis:true)
-                │     miss → fetch NASA, validate (Zod), normalize, cache 24h
-                ▼
-            NASA APOD API
+Browser
+  └─ Vue Query ─▶ Nitro (SWR) ─▶ Redis ─▶ NASA APOD API
+     (client)      (server)       (server)  (origin)
 ```
 
-The browser **never** talks to NASA directly, so the API key stays server-side.
+Each layer only asks the next when it is empty and fills itself on the way back,
+so a request stops at the first warm layer. The response carries a `_source`
+(`nitro` / `redis` / `nasa`) that drives the cache badges. NASA is validated with
+Zod at the boundary and a failed response is never cached. The browser **never**
+talks to NASA directly, so the API key stays server-side.
 
-### The three cache layers
+### The cache chain
 
 Each layer caches a **different** thing — this is the core lesson of the project:
 
-1. **Redis (server):** the normalized APOD **JSON** (titles, dates, image URLs).
-   TTL 24h, shared by every visitor. On a cache hit the payload carries a
-   `redis: "true"` flag, which the UI uses to show a Redis vs. NASA badge.
-2. **TanStack Vue Query (client):** the same **JSON**, kept in memory and
-   persisted to `localStorage`, so repeat visits render instantly without
-   re-fetching. The server dehydrates the cache into the Nuxt payload and the
-   client hydrates from it, so there is no duplicate fetch after hydration.
-3. **Browser HTTP cache + Netlify Image CDN:** the actual **image files**.
-   Vue Query never stores image binaries — that is what makes the "slow first
-   load, instant second load" behaviour of images a *separate* layer.
+1. **TanStack Vue Query (client):** the normalized APOD **JSON**, kept in memory
+   and persisted to `localStorage`, so repeat visits render instantly. The server
+   dehydrates the cache into the Nuxt payload and the client hydrates from it, so
+   there is no duplicate fetch after hydration.
+2. **Nitro (server, SWR):** an in-process, in-memory stale-while-revalidate cache
+   in front of Redis. A warm hit never leaves the server process (beating the
+   Redis network hop); while stale it serves the old value instantly and
+   revalidates in the background — no request waits.
+3. **Redis (server):** the persistent, shared cache-aside store (24h TTL), read
+   by every visitor. Nitro falls through to Redis on a miss.
+4. **NASA APOD API (origin):** rate-limited and slow, hit only when every cache
+   above is empty.
+
+Separately, the **image files** ride the browser HTTP cache + Netlify Image CDN —
+Vue Query never stores image binaries, which is why images have their own "slow
+first load, instant second load" layer.
+
+The site copy rides the **same chain** via `/api/content`, and the server code
+behind APOD follows a light ports-&-adapters split so the cache logic is
+unit-testable without Redis or NASA (see [Project structure](#project-structure)).
 
 > Note: the APOD list key includes the date range ("last 60 days, ending
 > yesterday"), so it rotates once per calendar day — the first request each day
@@ -70,9 +82,10 @@ Each layer caches a **different** thing — this is the core lesson of the proje
   served the data: the Vue Query mark (client cache) next to the Redis mark
   (server cache), or the NASA meatball for a fresh fetch.
 - **Cache footer** — a fixed bar reports the last real fetch's source and
-  timing, and offers two controls: *Vue Query: invalidate* (drop the browser
-  copy and refetch) and *Redis: clear* (wipe the server cache, so the next load
-  is a genuine cold start). The `/how` page walks through all of this.
+  timing, and offers per-layer controls: *invalidate* Vue Query (drop the browser
+  copy and refetch) and *clear* Nitro or Redis (empty a server layer; clear both
+  and the next load is a genuine cold start from NASA). The `/how` page walks
+  through all of this.
 
 ### Image pipeline (dev vs. deployed)
 

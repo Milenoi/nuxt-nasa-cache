@@ -13,7 +13,6 @@ const to = computed(
 const isVideo = computed(() => props.entry.mediaType === "video");
 
 const videoEl = ref<HTMLVideoElement | null>(null);
-const isPlaying = ref(false);
 // Bind the video src only once the card nears the viewport, so a long
 // video-filtered list never fetches every clip's metadata/frame at once.
 const shouldLoad = ref(false);
@@ -96,8 +95,6 @@ const imageSrc = computed(() =>
         loop
         playsinline
         @loadedmetadata="onVideoLoaded"
-        @play="isPlaying = true"
-        @pause="isPlaying = false"
       />
       <div v-else class="flex h-full w-full items-center justify-center text-text-faint">
         <Telescope class="h-8 w-8" />
@@ -113,16 +110,6 @@ const imageSrc = computed(() =>
         >
           <Play class="h-3 w-3 fill-white" />
           {{ content?.apod.all.videoLabel }}
-        </span>
-        <span
-          v-if="!isPlaying"
-          class="pointer-events-none absolute inset-0 grid place-items-center"
-        >
-          <span
-            class="grid size-[54px] place-items-center rounded-full border border-white/50 bg-[rgba(6,6,8,0.42)] text-white backdrop-blur-sm"
-          >
-            <Play class="h-5 w-5 fill-white" />
-          </span>
         </span>
       </template>
     </div>
