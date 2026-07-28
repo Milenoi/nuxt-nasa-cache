@@ -130,11 +130,11 @@ const clearRedis = async () => {
     class="fixed bottom-0 left-1/2 z-[60] w-full max-w-[1920px] -translate-x-1/2 border-t border-white/[0.08] bg-[rgba(7,7,9,0.74)] backdrop-blur-[18px] backdrop-saturate-[1.2]"
   >
     <div
-      class="container mx-auto flex flex-col items-center gap-3 px-5 py-3.5 md:px-8 xl:h-16 xl:flex-row xl:gap-4 xl:py-0"
+      class="container mx-auto flex flex-col items-start gap-3 px-5 py-3.5 md:px-8 xl:h-16 xl:flex-row xl:items-center xl:gap-4 xl:py-0"
     >
       <!-- Left: the cache chain with live full/empty dots + active highlight -->
       <ClientOnly>
-        <div class="flex flex-wrap items-center justify-center gap-x-2 gap-y-2">
+        <div class="flex flex-wrap items-center justify-start gap-x-2 gap-y-2">
           <div class="flex items-center gap-1">
             <template v-for="(node, i) in chain" :key="node.key">
               <span

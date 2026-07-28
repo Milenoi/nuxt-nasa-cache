@@ -32,29 +32,29 @@ const sourceLabel: Record<ContentSource, string> = {
 
 <template>
   <section
-    class="mx-auto min-h-screen max-w-3xl px-5 pb-40 pt-32 md:px-8 [animation:fadeUp_0.4s_ease]"
+    class="container mx-auto min-h-screen px-5 pb-40 pt-32 md:px-8 [animation:fadeUp_0.4s_ease]"
   >
-    <div v-if="about" class="text-center">
+    <div v-if="about" class="text-left md:text-center">
       <div class="mb-3 text-[15px] font-medium tracking-[0.01em] text-text-muted">
         {{ about.tagline }}
       </div>
       <h1
-        class="m-0 mx-auto mb-6 max-w-[15ch] text-balance text-center font-serif text-[clamp(40px,5.5vw,64px)] font-normal leading-[1.05] tracking-tight"
+        class="m-0 mb-6 text-balance font-serif text-[clamp(40px,5.5vw,64px)] font-normal leading-[1.05] tracking-tight md:mx-auto md:max-w-[15ch]"
       >
         {{ about.heading }}
       </h1>
 
-      <p class="mx-auto mb-5 max-w-[56ch] text-base leading-relaxed text-text-body">
+      <p class="mb-5 max-w-[56ch] text-base leading-relaxed text-text-body md:mx-auto">
         {{ about.lead1 }}
       </p>
-      <p class="mx-auto max-w-[56ch] text-[15px] leading-relaxed text-text-secondary">
+      <p class="max-w-[56ch] text-[15px] leading-relaxed text-text-secondary md:mx-auto">
         {{ about.lead2 }}
       </p>
 
       <div class="mb-1 mt-14 text-xs uppercase tracking-[0.14em] text-text-faint">
         {{ about.techStackLabel }}
       </div>
-      <dl class="mx-auto max-w-xl border-t border-white/[0.08]">
+      <dl class="max-w-xl border-t border-white/[0.08] text-left md:mx-auto">
         <div
           v-for="row in about.techStack"
           :key="row.label"
@@ -67,7 +67,7 @@ const sourceLabel: Record<ContentSource, string> = {
         </div>
       </dl>
 
-      <div class="text-center">
+      <div>
         <a
           :href="githubUrl"
           target="_blank"
@@ -78,7 +78,7 @@ const sourceLabel: Record<ContentSource, string> = {
         </a>
       </div>
 
-      <p class="mx-auto mt-10 max-w-[56ch] text-center text-sm leading-relaxed text-text-muted">
+      <p class="mt-10 max-w-[56ch] text-sm leading-relaxed text-text-muted md:mx-auto">
         {{ about.creditText }} {{ about.creditSep }}
         <a
           :href="about.creditUrl"
@@ -91,7 +91,7 @@ const sourceLabel: Record<ContentSource, string> = {
         </a>
       </p>
 
-      <p class="mx-auto mt-3 max-w-[56ch] text-center text-sm leading-relaxed text-text-muted">
+      <p class="mt-3 max-w-[56ch] text-sm leading-relaxed text-text-muted md:mx-auto">
         {{ about.siblingText }}
         <a
           :href="about.siblingUrl"
@@ -105,7 +105,7 @@ const sourceLabel: Record<ContentSource, string> = {
         {{ about.siblingSuffix }}
       </p>
 
-      <p class="mx-auto mt-8 text-center text-xs text-text-faint">
+      <p class="mt-8 text-xs text-text-faint">
         This page's copy was served from {{ sourceLabel[serverSource] }}.
       </p>
     </div>

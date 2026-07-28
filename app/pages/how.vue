@@ -47,9 +47,9 @@ const steps = how.steps.map((step, i) => ({
 
 <template>
   <section
-    class="mx-auto min-h-screen max-w-3xl px-5 pb-40 pt-32 md:px-8 [animation:fadeUp_0.4s_ease]"
+    class="container mx-auto min-h-screen px-5 pb-40 pt-32 md:px-8 [animation:fadeUp_0.4s_ease]"
   >
-    <div class="text-center">
+    <div class="text-left md:text-center">
       <div class="mb-3 text-[15px] font-medium tracking-[0.01em] text-text-muted">
         {{ how.tagline }}
       </div>
@@ -58,13 +58,13 @@ const steps = how.steps.map((step, i) => ({
       >
         {{ how.heading }}
       </h1>
-      <p class="mx-auto mb-12 max-w-[54ch] text-base leading-relaxed text-text-secondary">
+      <p class="mb-12 max-w-[54ch] text-base leading-relaxed text-text-secondary md:mx-auto">
         {{ how.leadBefore
         }}<span class="text-text-strong">{{ how.leadHighlight }}</span
         >{{ how.leadAfter }}
       </p>
 
-      <ol class="mx-auto flex max-w-md list-none flex-col text-left">
+      <ol class="flex max-w-md list-none flex-col text-left md:mx-auto">
         <li v-for="(step, i) in steps" :key="step.name" class="flex gap-5">
           <!-- node + connector -->
           <div class="flex flex-col items-center">
@@ -139,15 +139,15 @@ const steps = how.steps.map((step, i) => ({
       </ol>
 
       <!-- Usage guide: what the cache controls do -->
-      <div class="mt-20 border-t border-white/[0.08] pt-14 text-center">
+      <div class="mt-20 border-t border-white/[0.08] pt-14 text-left md:text-center">
         <h2 class="m-0 font-serif text-[clamp(28px,3.4vw,40px)] font-normal tracking-tight">
           {{ how.guideHeading }}
         </h2>
-        <p class="mx-auto mt-3 max-w-[52ch] text-[15px] leading-relaxed text-text-secondary">
+        <p class="mt-3 max-w-[52ch] text-[15px] leading-relaxed text-text-secondary md:mx-auto">
           {{ how.guideLead }}
         </p>
 
-        <div class="mx-auto mt-10 grid max-w-4xl gap-4 sm:grid-cols-3">
+        <div class="mt-10 grid max-w-4xl gap-4 sm:grid-cols-3 md:mx-auto">
           <div
             v-for="tip in how.guide"
             :key="tip.title"
