@@ -67,13 +67,19 @@ const imageSrc = computed(() =>
     class="group flex h-full flex-col overflow-hidden rounded-2xl border border-muted bg-surface-card"
   >
     <div class="relative aspect-[3/2] shrink-0 overflow-hidden">
+      <!-- One px width per breakpoint — never a bare vw value, which does not
+           resolve against the screens config and collapses the srcset to a
+           useless 1w ladder. The widths are the real column width of the grid:
+           full width below sm, two columns from sm, three from lg (gap-5 and the
+           container padding subtracted), so each card downloads its own size
+           instead of a full-width image. -->
       <NuxtImg
         v-if="imageSrc"
         :src="imageSrc"
         :alt="entry.title"
         width="600"
         height="400"
-        sizes="100vw sm:50vw lg:420px"
+        sizes="600px sm:290px md:342px lg:307px xl:392px 2xl:478px"
         densities="x1"
         fit="cover"
         format="avif"

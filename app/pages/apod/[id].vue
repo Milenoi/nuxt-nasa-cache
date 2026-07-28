@@ -159,13 +159,19 @@ const paragraphs = computed(() => {
           :height="imgHeight"
           class="block h-auto w-full lg:h-full lg:object-contain"
         >
+        <!-- One px width per breakpoint — never a bare vw value, which does not
+             resolve against the screens config and collapses the srcset to a
+             single-candidate ladder (every device then pulls the widest image).
+             The widths follow this layout: full container width up to lg, then
+             the media column of the 2-column grid (container minus the 320px
+             text column and the gap), capped at 1120 by the 1536 container. -->
         <NuxtImg
           v-else
           :src="item.hdurl || item.url"
           :alt="item.title"
           :width="RENDER_WIDTH"
           :height="imgHeight"
-          sizes="100vw lg:1120px"
+          sizes="600px sm:600px md:704px lg:608px xl:864px 2xl:1120px"
           densities="x1"
           format="avif"
           quality="80"

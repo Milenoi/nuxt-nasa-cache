@@ -96,20 +96,28 @@ const serverPill = computed(() => {
       />
         <!-- Explicit per-breakpoint px sizes, not "100vw": a bare vw value does not
              resolve against the screens config here and collapses the srcset to a
-             useless 1w/2w ladder, so every device downloads the full image. Listed
-             widths give a real responsive ladder (a phone pulls ~960w, desktop
-             1920w). No width/height/fit: the hero fills a fixed-height, absolutely
-             positioned stage, so CSS object-cover handles crop and there is no CLS
-             to reserve against. quality 60 — it sits behind a gradient and text and
-             slow-zooms, so the extra bytes of q80 buy no visible fidelity. -->
+             useless 1w/2w ladder, so every device downloads the full image. The
+             stage is full-bleed, so each width is the widest viewport below the
+             next breakpoint, capped at the 1920 page wrapper (a phone pulls 640w,
+             desktop 1920w). No width/height/fit: the hero fills a fixed-height,
+             absolutely positioned stage, so CSS object-cover handles crop and
+             there is no CLS to reserve against. quality 60 — it sits behind a
+             gradient and text and slow-zooms, so the extra bytes of q80 buy no
+             visible fidelity. No `preload` prop: @nuxt/image 2.0.0 only puts
+             `imagesrcset` on the preload link for density (x) descriptors, so a
+             width-based srcset like this one preloads the bare `href` — the
+             widest variant, which no viewport ever renders. That downloaded a
+             second, unused hero (107 KB) alongside the right one. The stage sits
+             at the top of the SSR markup, so the preload scanner finds it
+             immediately anyway; fetchpriority high keeps it first in line. -->
       <NuxtImg
           v-else
           :src="heroImage"
           :alt="latestApod?.title ?? hero?.tagline"
-          sizes="xs:600px sm:960px md:1280px lg:1600px xl:1920px"
+          sizes="640px sm:768px md:1024px lg:1280px xl:1536px 2xl:1920px"
+          densities="x1"
           format="avif"
           quality="60"
-          preload
           fetchpriority="high"
           loading="eager"
           class="h-full w-full object-cover animate-[slowzoom_40s_ease-in-out_infinite_alternate]"
