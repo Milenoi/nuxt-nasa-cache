@@ -43,6 +43,16 @@ export default defineNuxtConfig({
     componentDir: "@/components/ui",
   },
 
+  // Preload the two above-the-fold families (serif hero heading + sans body) so
+  // the font isn't discovered late in the critical chain — shaves the FOUT.
+  // Scoped to these families on purpose; preloading everything would over-fetch.
+  fonts: {
+    families: [
+      { name: "Newsreader", preload: true },
+      { name: "Schibsted Grotesk", preload: true },
+    ],
+  },
+
   vite: {
     plugins: [tailwindcss()],
     build: {
