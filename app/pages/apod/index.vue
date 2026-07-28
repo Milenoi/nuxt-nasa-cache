@@ -1,22 +1,20 @@
 <script setup lang="ts">
 import { useRouteQuery } from "@vueuse/router";
-import { apod } from "~/assets/json/static-text.json";
 import type { ApodList, ApodMediaType } from "#shared/types";
 
-const { listPage, all } = apod;
+// Copy + SEO come from the shared content via the cache chain.
+const { content } = useSiteContent();
+const listPage = computed(() => content.value?.apod.listPage);
+const all = computed(() => content.value?.apod.all);
+const seo = computed(() => content.value?.seo?.apod);
 
 const { data, serverSource, isPending } = await useFetchApod<ApodList>();
 
 useSeoMeta({
-  title: "Recent captures - Nuxt Cache",
-  description:
-    "Browse the last 60 days of NASA's Astronomy Picture of the Day — images and videos, served instantly from Redis and TanStack Vue Query.",
-  ogTitle: "Recent captures — Nuxt Cache",
-  ogDescription:
-    "The last 60 days of NASA's Astronomy Picture of the Day, filterable by images and videos and served from cache.",
-  twitterTitle: "Recent captures — Nuxt Cache",
-  twitterDescription:
-    "The last 60 days of NASA's Astronomy Picture of the Day, filterable by images and videos and served from cache.",
+  title: () => seo.value?.title,
+  description: () => seo.value?.description,
+  ogTitle: () => seo.value?.title,
+  ogDescription: () => seo.value?.description,
 });
 
 // Media-type filter (all / image / video), synced to the URL query.
@@ -24,11 +22,11 @@ const mediaFilter = useRouteQuery<"all" | ApodMediaType>("type", "all", {
   mode: "push",
 });
 
-const filters = [
-  { value: "all", label: all.filterAll },
-  { value: "image", label: all.filterImages },
-  { value: "video", label: all.filterVideos },
-] as const;
+const filters = computed(() => [
+  { value: "all", label: all.value?.filterAll },
+  { value: "image", label: all.value?.filterImages },
+  { value: "video", label: all.value?.filterVideos },
+] as const);
 
 const filteredEntries = computed(() => {
   const entries = data.value?.entries ?? [];
@@ -47,12 +45,12 @@ const filteredEntries = computed(() => {
     <div class="mb-10 flex flex-wrap items-end justify-between gap-4">
       <div>
         <div class="mb-3 text-[15px] font-medium tracking-[0.01em] text-text-muted">
-          {{ listPage.title }}
+          {{ listPage?.title }}
         </div>
         <h1
           class="m-0 font-serif text-[clamp(42px,5.4vw,68px)] font-normal leading-none tracking-tight"
         >
-          {{ listPage.heading }}
+          {{ listPage?.heading }}
         </h1>
       </div>
 
@@ -108,6 +106,6 @@ const filteredEntries = computed(() => {
     </ul>
 
     <!-- Empty -->
-    <p v-else class="text-text-muted">{{ all.noResult }}</p>
+    <p v-else class="text-text-muted">{{ all?.noResult }}</p>
   </section>
 </template>

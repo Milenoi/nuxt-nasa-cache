@@ -86,15 +86,122 @@ export interface AboutContent {
     siblingSuffix: string;
 }
 
+/** A single nav entry (label + route), shared by the header and the sitemap. */
+export interface MenuLink {
+    label: string;
+    link: string;
+}
+
+/** Per-page SEO copy, kept in the content so pages don't hardcode meta tags. */
+export interface SeoEntry {
+    title: string;
+    description: string;
+}
+
+/** Pages that have their own SEO entry in the content. */
+export type SeoPage = "home" | "apod" | "how" | "about";
+
+export interface CommonContent {
+    isFetchingFromLabel: string;
+    backLabel: string;
+    skipToContent: string;
+}
+
+export interface HeaderContent {
+    brand: string;
+    github: string;
+    githubUrl: string;
+}
+
+export interface HeroContent {
+    tagline: string;
+    cta: string;
+    client: string;
+    clientLayer: string;
+    serverRedis: string;
+    serverRedisLayer: string;
+    serverNasa: string;
+    serverNasaLayer: string;
+    serverNitro: string;
+    serverNitroLayer: string;
+}
+
+export interface FooterContent {
+    invalidateLabel: string;
+    deleteLabel: string;
+    vueQuery: string;
+    nitro: string;
+    redis: string;
+    nasa: string;
+    vueQueryTitle: string;
+    nitroTitle: string;
+    redisTitle: string;
+    statusReady: string;
+    toastRevalidated: string;
+    toastNothingToRefetch: string;
+    toastClearFail: string;
+}
+
+export interface ApodAllContent {
+    fromLabel: string;
+    videoLabel: string;
+    noResult: string;
+    filterAll: string;
+    filterImages: string;
+    filterVideos: string;
+    viewSourceLabel: string;
+    bothCaches: string;
+    muteLabel: string;
+    unmuteLabel: string;
+    playLabel: string;
+    pauseLabel: string;
+    seekLabel: string;
+}
+
+export interface ApodContent {
+    all: ApodAllContent;
+    listPage: { title: string; heading: string };
+}
+
+export interface HowStep {
+    name: string;
+    role: string;
+    desc: string;
+    href: string;
+}
+
+export interface HowContent {
+    tagline: string;
+    heading: string;
+    leadBefore: string;
+    leadHighlight: string;
+    leadAfter: string;
+    docsLabel: string;
+    codeShow: string;
+    codeHide: string;
+    steps: HowStep[];
+    guideHeading: string;
+    guideLead: string;
+    guide: { title: string; desc: string }[];
+}
+
 /**
- * The site content payload returned by `/api/content`. Only the sections that
- * are actually consumed via the API are typed precisely; the rest of the JSON is
- * covered by the index signature until it, too, is migrated onto the API.
+ * The full site content payload returned by `/api/content`. Every section
+ * consumers read is typed precisely, so pages and components can drop their
+ * direct static-text imports and read everything through the cache chain.
  */
 export interface SiteContent {
+    seo: Record<SeoPage, SeoEntry>;
+    common: CommonContent;
+    header: HeaderContent;
+    hero: HeroContent;
+    footer: FooterContent;
+    /** Nav entries, keyed by page. */
+    menu: { home: MenuLink; apod: MenuLink; how: MenuLink; about: MenuLink };
+    apod: ApodContent;
+    how: HowContent;
     about: AboutContent;
     /** Where this response came from — set fresh by the server on every request. */
     _source?: ContentSource;
-    [key: string]: unknown;
 }
 

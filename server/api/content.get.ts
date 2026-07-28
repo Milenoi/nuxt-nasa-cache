@@ -1,9 +1,20 @@
+import { createHash } from "node:crypto";
 import type { ContentSource, SiteContent } from "#shared/types";
 // The bundled JSON is the origin for site content — the equivalent of NASA for
 // the APOD data, except it ships with the app instead of coming over the wire.
 import staticText from "../../app/assets/json/static-text.json";
 
 const CACHE_TTL = 86400; // 24h
+
+// Version the cache by a hash of the bundled content, so any edit to the copy
+// (a new section, a changed shape) yields a NEW key. That way a stale payload
+// with an outdated shape can never be served after a content change — the old
+// key is simply orphaned and expires. Without this, adding a section left the
+// previous cached payload (missing that section) live for up to CACHE_TTL.
+const CONTENT_VERSION = createHash("sha1")
+  .update(JSON.stringify(staticText))
+  .digest("hex")
+  .slice(0, 8);
 
 // Nitro SWR layer (the front server cache): keep data "fresh" only briefly so the
 // stale-while-revalidate behaviour is observable, then serve stale up to a day.
@@ -32,7 +43,7 @@ const loadContent = async (): Promise<SiteContent> => {
 
   const throughRedis = async (): Promise<ContentPayload> => {
     const storage = useStorage("redis");
-    const cacheKey = "content:site";
+    const cacheKey = `content:site:${CONTENT_VERSION}`;
 
     const cached = await storage.getItem<ContentPayload>(cacheKey);
     if (cached) {
@@ -49,7 +60,7 @@ const loadContent = async (): Promise<SiteContent> => {
   const throughNitro = defineCachedFunction(throughRedis, {
     name: "content-site",
     group: "content-nitro",
-    getKey: () => "site",
+    getKey: () => `site:${CONTENT_VERSION}`,
     maxAge: NITRO_MAX_AGE,
     staleMaxAge: NITRO_STALE_MAX_AGE,
     swr: true,

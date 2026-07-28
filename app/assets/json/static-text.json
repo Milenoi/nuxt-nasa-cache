@@ -1,4 +1,22 @@
 {
+  "seo": {
+    "home": {
+      "title": "Nuxt Cache — making a slow API feel instant",
+      "description": "A Nuxt 4 demo that makes NASA's slow, rate-limited Astronomy Picture of the Day API feel instant with Redis and TanStack Vue Query caching."
+    },
+    "apod": {
+      "title": "Recent captures — Nuxt Cache",
+      "description": "Browse the last 60 days of NASA's Astronomy Picture of the Day — images and videos, served instantly from Redis and TanStack Vue Query."
+    },
+    "how": {
+      "title": "How it works — Nuxt Cache",
+      "description": "The cache chain behind Nuxt Cache: Vue Query (client) → Nitro (SWR) → Redis → NASA's APOD API — each layer asks the next only when it is empty."
+    },
+    "about": {
+      "title": "About — Nuxt Cache",
+      "description": "A small Nuxt 4 side project about multi-layer caching over NASA's Astronomy Picture of the Day API."
+    }
+  },
   "common": {
     "isFetchingFromLabel": "...Fetching data from",
     "backLabel": "Back",
@@ -6,7 +24,8 @@
   },
   "header": {
     "brand": "Nuxt Cache",
-    "github": "GitHub ↗"
+    "github": "GitHub ↗",
+    "githubUrl": "https://github.com/Milenoi/nuxt-cache"
   },
   "errorPage": {
     "eyebrow": "Lost in space",

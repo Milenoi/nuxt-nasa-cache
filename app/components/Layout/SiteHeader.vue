@@ -1,14 +1,17 @@
 <script setup lang="ts">
 // Fixed, transparent, blurred-gradient header. Replaces the Vuetify app bar.
-import { header, menu } from "~/assets/json/static-text.json";
+// Copy + nav come from the shared content via the cache chain (useSiteContent).
+const { content } = useSiteContent();
 
 const route = useRoute();
 const menuOpen = ref(false);
 
-const githubUrl = "https://github.com/Milenoi/nuxt-cache";
-
-// Nav items come from the central static-text file.
-const nav = [menu.apod, menu.how, menu.about];
+// Nav items come from the content's menu.
+const nav = computed(() =>
+  content.value
+    ? [content.value.menu.apod, content.value.menu.how, content.value.menu.about]
+    : [],
+);
 
 // Gallery stays active on detail pages (/apod/:date) too.
 const isActive = (to: string) =>
@@ -37,7 +40,7 @@ watch(
         to="/"
         class="font-serif text-[22px] tracking-[0.01em] text-white"
       >
-        {{ header.brand }}
+        {{ content?.header.brand }}
       </NuxtLink>
 
       <!-- Desktop nav -->
@@ -52,12 +55,12 @@ watch(
           {{ item.label }}
         </NuxtLink>
         <a
-          :href="githubUrl"
+          :href="content?.header.githubUrl"
           target="_blank"
           rel="noopener"
           class="inline-flex items-center gap-1.5 text-white/60 transition-colors hover:text-white"
         >
-          {{ header.github }}
+          {{ content?.header.github }}
         </a>
       </div>
 
@@ -107,12 +110,12 @@ watch(
           {{ item.label }}
         </NuxtLink>
         <a
-          :href="githubUrl"
+          :href="content?.header.githubUrl"
           target="_blank"
           rel="noopener"
           class="px-1 py-[14px] text-base text-text-secondary"
         >
-          {{ header.github }}
+          {{ content?.header.github }}
         </a>
       </div>
     </Transition>

@@ -1,3 +1,9 @@
+# Run the unit tests before building, so a failing test blocks the deploy.
+# (`yarn build` runs `yarn snippets && nuxt build`; Nitro's Netlify preset is set
+# by Netlify's Nuxt detection via NITRO_PRESET, so the output is still picked up.)
+[build]
+  command = "yarn test && yarn build"
+
 [images]
   remote_images = [
     'https://apod.nasa.gov/.*',

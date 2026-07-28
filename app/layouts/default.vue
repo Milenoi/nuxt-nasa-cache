@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useIsFetching } from "@tanstack/vue-query";
-import { common } from "~/assets/json/static-text.json";
+
+// Copy comes from the shared content via the cache chain.
+const { content } = useSiteContent();
 
 // Full-screen "Fetching from Redis/NASA" overlay stays a signature feature.
 const isFetching = useIsFetching();
@@ -13,7 +15,7 @@ const isFetching = useIsFetching();
         href="#main"
         class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:border focus:border-white/20 focus:bg-surface-panel focus:px-4 focus:py-2 focus:text-sm focus:text-foreground"
       >
-        {{ common.skipToContent }}
+        {{ content?.common.skipToContent }}
       </a>
       <LayoutSiteHeader />
 

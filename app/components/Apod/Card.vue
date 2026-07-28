@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { Play, Telescope } from "@lucide/vue";
 import { useIntersectionObserver } from "@vueuse/core";
-import { apod, menu } from "~/assets/json/static-text.json";
 import type { ApodEntry, ApodSource } from "#shared/types";
 
 const props = defineProps<{ entry: ApodEntry; serverSource: ApodSource }>();
 
-const to = computed(() => `${menu.apod.link}/${props.entry.date}`);
+const { content } = useSiteContent();
+
+const to = computed(
+  () => `${content.value?.menu.apod.link ?? "/apod"}/${props.entry.date}`,
+);
 const isVideo = computed(() => props.entry.mediaType === "video");
 
 const videoEl = ref<HTMLVideoElement | null>(null);
@@ -109,7 +112,7 @@ const imageSrc = computed(() =>
           class="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full border border-white/[0.16] bg-[rgba(6,6,8,0.6)] px-2.5 py-1 text-[11px] font-medium text-white backdrop-blur-sm"
         >
           <Play class="h-3 w-3 fill-white" />
-          {{ apod.all.videoLabel }}
+          {{ content?.apod.all.videoLabel }}
         </span>
         <span
           v-if="!isPlaying"

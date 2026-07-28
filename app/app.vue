@@ -19,9 +19,9 @@ useSeoMeta({
   ogImage,
   ogImageWidth: 1200,
   ogImageHeight: 630,
+  // twitter:title/description are omitted — X falls back to the og:* tags, so
+  // duplicating them is deprecated noise. Card type + image are still explicit.
   twitterCard: "summary_large_image",
-  twitterTitle: siteName,
-  twitterDescription: siteDescription,
   twitterImage: ogImage,
 });
 

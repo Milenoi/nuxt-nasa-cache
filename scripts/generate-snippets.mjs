@@ -44,43 +44,44 @@ if (import.meta.client) hydrate(queryClient, vueQueryState.value);`,
   {
     key: "nitro",
     file: "server/api/apod.get.ts",
-    code: `// The Nitro layer wraps Redis in an in-process, stale-while-revalidate cache.
-const throughNitro = defineCachedFunction(throughRedis, {
-  name: "apod-detail",
-  group: "apod-nitro",
-  getKey: (d: string) => d,
-  maxAge: 30,          // fresh for 30s — answers directly
-  staleMaxAge: 86400,  // then serves the stale value instantly...
-  swr: true,           // ...and refreshes in the background, no request waits
-});
-
-// A warm hit never leaves the server process, beating the Redis network hop.
+    code: `// The Nitro layer wraps the use-case in an in-process, stale-while-revalidate
+// cache. A warm hit never leaves the server process — beating the Redis hop.
+const throughNitro = defineCachedFunction(
+  async (d: string): Promise<ApodEntry> => {
+    const { entry, source } = await loadApodDetail(d, deps);
+    servedBy = source; // only runs on a Nitro miss
+    return entry;
+  },
+  {
+    name: "apod-detail",
+    getKey: (d: string) => d,
+    maxAge: 30,          // fresh for 30s — answers directly
+    staleMaxAge: 86400,  // then serves the stale value instantly...
+    swr: true,           // ...and refreshes in the background, no request waits
+  },
+);
 const entry = await throughNitro(date);`,
   },
   {
     key: "redis",
-    file: "server/api/apod.get.ts",
-    code: `// Redis: the persistent, shared cache-aside store (24h TTL). Nitro falls
-// through to here on a miss.
-const throughRedis = async (d: string): Promise<ApodEntry> => {
-  const storage = useStorage("redis");
-  const cacheKey = \`apod:detail:\${d}\`;
+    file: "server/apod/usecases.ts",
+    code: `// Redis sits behind the CachePort: a persistent, shared cache-aside store
+// (24h TTL). The use-case talks only to the port — Redis is an injected adapter,
+// so this exact logic runs against a plain Map in the unit tests.
+export const loadApodDetail = async (date: string, deps: ApodDeps) => {
+  const cached = await deps.cache.get<ApodEntry>(detailKey(date));
+  if (cached) return { entry: cached, source: "redis" }; // hit: no NASA call
 
-  const cached = await storage.getItem<ApodEntry>(cacheKey);
-  if (cached) {
-    servedBy = "redis";
-    return cached; // hit: shared by every visitor, no NASA call
-  }
-
-  servedBy = "nasa"; // miss: fall through to the origin...
-  const entry = await fetchDetail(d);
-  await storage.setItem(cacheKey, entry, { ttl: 86400 }); // ...then backfill
-  return entry;
+  // miss: fall through to the origin, normalize, then backfill the cache
+  const raw = await deps.source.fetchDetail(date);
+  const entry = await withDimensions(normalizeEntry(raw), deps);
+  await deps.cache.set(detailKey(date), entry, CACHE_TTL);
+  return { entry, source: "nasa" };
 };`,
   },
   {
     key: "nasa",
-    file: "server/api/apod.get.ts",
+    file: "server/apod/nasaSource.ts",
     code: `// The origin: NASA's APOD API — rate-limited and slow, so it is the last
 // resort. The response is validated before anything downstream trusts it.
 const fetchFromNasa = async <T>(url: string, schema: ZodType<T>): Promise<T> => {

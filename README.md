@@ -111,11 +111,32 @@ app/                  # application code (Nuxt 4 srcDir → ~/ and @/ resolve he
   lib/                 # shadcn-vue helpers (cn)
   assets/              # tailwind.css, static-text.json
   app.vue · error.vue
-server/                # Nitro API + utils — stays at the root (#server/...)
-  api/apod.get.ts      # the cache chain
+server/                # Nitro server — stays at the root (#server/...)
+  api/apod.get.ts      # cache-chain route (thin: DI + Nitro SWR + _source badge)
+  api/content.get.ts   # site copy served through the same cache chain
+  apod/                # framework-agnostic core + adapters (see below)
+  routes/              # robots.txt, sitemap.xml, llms.txt (built from content)
+  utils/               # getApodApi, apodSchema (Zod), getImageSize, helpers
 shared/types/          # types shared by app + server (#shared/types)
+test/                  # Vitest unit tests (use-cases, utils)
 public/                # static files, brand SVGs
 ```
+
+The APOD server code follows a light **ports & adapters** split so the cache
+logic is unit-testable without Redis or NASA:
+
+```text
+server/apod/
+  ports.ts             # interfaces: CachePort, ApodSourcePort, MediaProbePort
+  mapper.ts            # pure: normalize, date range, cache keys
+  usecases.ts          # loadApodList / loadApodDetail — talk only to the ports
+  redisCache.ts        # CachePort  → Redis (useStorage)
+  nasaSource.ts        # ApodSourcePort → NASA ($fetch + Zod)
+  imageProbe.ts        # MediaProbePort → image dimension probing
+```
+
+The route injects the concrete adapters; the use-cases are tested with a
+Map-backed fake cache and a stub source (`test/apod/usecases.test.ts`).
 
 Code shared between the Vue app and the Nitro server lives in `shared/`; the
 server stays at the project root (not under `app/`).

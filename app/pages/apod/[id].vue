@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { ArrowLeft, Pause, Play, Volume2, VolumeX } from "@lucide/vue";
-import { apod, common } from "~/assets/json/static-text.json";
 import type { ApodEntry } from "#shared/types";
 
-const { all, listPage } = apod;
+// Copy comes from the shared content via the cache chain.
+const { content } = useSiteContent();
+const all = computed(() => content.value?.apod.all);
+const listPage = computed(() => content.value?.apod.listPage);
+const common = computed(() => content.value?.common);
 
 const route = useRoute();
 const id = route.params.id as string;
@@ -33,9 +36,7 @@ useSeoMeta({
   ogTitle: () => item.value?.title ?? "Astronomy Picture of the Day",
   ogDescription: () => seoDescription.value,
   ogImage: () => item.value?.thumbnailUrl || item.value?.url,
-  twitterTitle: () => item.value?.title ?? "Astronomy Picture of the Day",
-  twitterDescription: () => seoDescription.value,
-  twitterImage: () => item.value?.thumbnailUrl || item.value?.url,
+  // twitter:* inherit from og:* (X's documented fallback), so we don't repeat them.
 });
 
 const embed = computed(() =>
@@ -117,11 +118,11 @@ const paragraphs = computed(() => {
       class="mb-8 inline-flex items-center gap-2 text-sm text-text-muted transition-colors hover:text-foreground"
     >
       <ArrowLeft class="h-4 w-4" />
-      {{ common.backLabel }}
+      {{ common?.backLabel }}
     </NuxtLink>
 
     <div class="mb-3 text-[15px] font-medium tracking-[0.01em] text-text-muted">
-      {{ listPage.title }}
+      {{ listPage?.title }}
     </div>
     <h1
       class="m-0 mx-auto max-w-[92%] text-balance text-center font-serif text-[clamp(40px,4.6vw,56px)] font-normal leading-[1.08] tracking-tight lg:mx-0 lg:max-w-none lg:text-left"
@@ -129,7 +130,7 @@ const paragraphs = computed(() => {
       {{ item.title }}
     </h1>
     <p class="mb-8 mt-3 text-sm text-text-faint">
-      {{ all.fromLabel }} {{ item.formattedDate }}
+      {{ all?.fromLabel }} {{ item.formattedDate }}
     </p>
 
     <!-- Body: image (left) + narrow description column (right) on lg+ -->
@@ -215,7 +216,7 @@ const paragraphs = computed(() => {
           <button
             type="button"
             class="grid size-9 shrink-0 place-items-center rounded-full text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            :aria-label="isPaused ? all.playLabel : all.pauseLabel"
+            :aria-label="isPaused ? all?.playLabel : all?.pauseLabel"
             @click="togglePlay"
           >
             <Play v-if="isPaused" class="h-5 w-5 fill-white" />
@@ -232,7 +233,7 @@ const paragraphs = computed(() => {
             :max="duration || 0"
             step="0.1"
             :value="currentTime"
-            :aria-label="all.seekLabel"
+            :aria-label="all?.seekLabel"
             :aria-valuetext="`${formatMediaTime(currentTime)} / ${formatMediaTime(duration)}`"
             class="flex-1 cursor-pointer accent-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             @input="onSeek"
@@ -245,7 +246,7 @@ const paragraphs = computed(() => {
           <button
             type="button"
             class="grid size-9 shrink-0 place-items-center rounded-full text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            :aria-label="videoMuted ? all.unmuteLabel : all.muteLabel"
+            :aria-label="videoMuted ? all?.unmuteLabel : all?.muteLabel"
             :aria-pressed="!videoMuted"
             @click="toggleMute"
           >
@@ -263,7 +264,7 @@ const paragraphs = computed(() => {
           rel="noopener noreferrer"
           class="inline-flex items-center gap-2 rounded-lg border border-white/[0.16] bg-white/[0.03] px-5 py-3 text-sm font-medium transition-colors hover:border-white/30 hover:bg-white/[0.09]"
         >
-          {{ all.viewSourceLabel }} ↗
+          {{ all?.viewSourceLabel }} ↗
         </a>
       </div>
       </div>

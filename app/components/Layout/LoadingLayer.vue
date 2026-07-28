@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-// Import static text
-import { common } from "~/assets/json/static-text.json";
+// Copy comes from the shared content via the cache chain.
+const { content } = useSiteContent();
 
 // While fetching we hint at the source: the active server layer (the frontmost
 // one still holding data) is what a request falls through to.
@@ -48,7 +48,7 @@ const prediction = computed(() => {
         aria-live="polite"
         class="inline-flex items-center gap-2 text-sm text-text-secondary"
       >
-        {{ common.isFetchingFromLabel }}
+        {{ content?.common.isFetchingFromLabel }}
         <span :class="prediction.cls" class="font-medium">
           {{ prediction.label }}
         </span>

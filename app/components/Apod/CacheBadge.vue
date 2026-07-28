@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { apod } from "~/assets/json/static-text.json";
 import type { ApodSource } from "#shared/types";
+
+const { content } = useSiteContent();
 
 // Every gallery item flows through both caches, so we show the client (Vue Query)
 // mark next to the live server source (Redis, or NASA once the cache is cleared).
@@ -34,6 +35,6 @@ const serverMark = computed(() => {
         >
       </span>
     </UiTooltipTrigger>
-    <UiTooltipContent>{{ apod.all.bothCaches }}</UiTooltipContent>
+    <UiTooltipContent>{{ content?.apod.all.bothCaches }}</UiTooltipContent>
   </UiTooltip>
 </template>

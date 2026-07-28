@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { useQueryClient } from "@tanstack/vue-query";
 import { toast } from "vue-sonner";
-import { footer } from "~/assets/json/static-text.json";
 import type { ApodSource } from "#shared/types";
+
+// Footer copy comes from the shared content via the cache chain.
+const { content } = useSiteContent();
+const footer = computed(() => content.value?.footer);
 
 // Fixed cache-control bar. It makes the cache CHAIN tangible:
 //   Vue Query (browser) -> Nitro (SWR) -> Redis (persistent) -> NASA (origin)
@@ -67,10 +70,10 @@ const activeLayer = computed<ApodSource>(() => activeServerSource.value);
 // The chain, from client (front) to origin (back). NASA is the origin and is
 // always available — it can't be emptied.
 const chain = computed(() => [
-  { key: "client", label: footer.vueQuery, full: vueQueryFull.value, dot: "bg-tanstack" },
-  { key: "nitro", label: footer.nitro, full: serverStatus.value.nitro, dot: "bg-nitro" },
-  { key: "redis", label: footer.redis, full: serverStatus.value.redis, dot: "bg-redis" },
-  { key: "nasa", label: footer.nasa, full: true, dot: "bg-white/70" },
+  { key: "client", label: footer.value?.vueQuery, full: vueQueryFull.value, dot: "bg-tanstack" },
+  { key: "nitro", label: footer.value?.nitro, full: serverStatus.value.nitro, dot: "bg-nitro" },
+  { key: "redis", label: footer.value?.redis, full: serverStatus.value.redis, dot: "bg-redis" },
+  { key: "nasa", label: footer.value?.nasa, full: true, dot: "bg-white/70" },
 ]);
 
 // Layer 1 — Vue Query (client): INVALIDATE. Marks the client cache stale and
@@ -84,13 +87,13 @@ const invalidateVueQuery = async () => {
   await refreshStatus();
   if (active.length > 0) {
     toast.success(
-      fill(footer.toastRevalidated, {
+      fill(footer.value?.toastRevalidated ?? "", {
         source: sourceLabel.value,
         timing: timing.value ? ` in ${timing.value}` : "",
       }),
     );
   } else {
-    toast.info(footer.toastNothingToRefetch);
+    toast.info(footer.value?.toastNothingToRefetch ?? "");
   }
 };
 
@@ -105,7 +108,7 @@ const clearNitro = async () => {
       toast.error(data.message);
     }
   } catch {
-    toast.error(footer.toastClearFail);
+    toast.error(footer.value?.toastClearFail ?? "");
   }
 };
 
@@ -120,7 +123,7 @@ const clearRedis = async () => {
       toast.error(data.message);
     }
   } catch {
-    toast.error(footer.toastClearFail);
+    toast.error(footer.value?.toastClearFail ?? "");
   }
 };
 </script>
@@ -164,7 +167,7 @@ const clearRedis = async () => {
         </div>
 
         <template #fallback>
-          <span class="text-sm text-text-muted">{{ footer.statusReady }}</span>
+          <span class="text-sm text-text-muted">{{ footer?.statusReady }}</span>
         </template>
       </ClientOnly>
 
@@ -176,53 +179,53 @@ const clearRedis = async () => {
       >
         <!-- Invalidate group: Vue Query (client) — revalidate → refetch -->
         <div class="flex items-center gap-2">
-          <span class="text-xs text-text-dim">{{ footer.invalidateLabel }}</span>
+          <span class="text-xs text-text-dim">{{ footer?.invalidateLabel }}</span>
           <UiTooltip>
             <UiTooltipTrigger as-child>
               <button
                 type="button"
-                :aria-label="`${footer.invalidateLabel} ${footer.vueQuery}`"
+                :aria-label="`${footer?.invalidateLabel} ${footer?.vueQuery}`"
                 class="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-tanstack-border bg-tanstack-tint px-3 py-2 text-sm font-medium text-text-strong transition-all hover:border-[rgba(56,189,248,0.5)] hover:bg-[rgba(56,189,248,0.14)] sm:px-4"
                 @click="invalidateVueQuery"
               >
                 <img src="/svg/marks/query.svg" alt="" width="24" height="24" class="h-4 w-auto">
-                <span class="hidden sm:inline">{{ footer.vueQuery }}</span>
+                <span class="hidden sm:inline">{{ footer?.vueQuery }}</span>
               </button>
             </UiTooltipTrigger>
-            <UiTooltipContent class="z-[70] max-w-[260px]">{{ footer.vueQueryTitle }}</UiTooltipContent>
+            <UiTooltipContent class="z-[70] max-w-[260px]">{{ footer?.vueQueryTitle }}</UiTooltipContent>
           </UiTooltip>
         </div>
 
         <!-- Delete group: Nitro + Redis (server caches) -->
         <div class="flex items-center gap-2">
-          <span class="text-xs text-text-dim">{{ footer.deleteLabel }}</span>
+          <span class="text-xs text-text-dim">{{ footer?.deleteLabel }}</span>
           <UiTooltip>
             <UiTooltipTrigger as-child>
               <button
                 type="button"
-                :aria-label="`${footer.deleteLabel} ${footer.nitro}`"
+                :aria-label="`${footer?.deleteLabel} ${footer?.nitro}`"
                 class="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-nitro-border bg-nitro-tint px-3 py-2 text-sm font-medium text-nitro transition-all hover:border-[rgba(74,222,128,0.55)] hover:bg-[rgba(74,222,128,0.16)] sm:px-4"
                 @click="clearNitro"
               >
                 <img src="/svg/marks/nitro.svg" alt="" width="24" height="24" class="h-4 w-auto">
-                <span class="hidden sm:inline">{{ footer.nitro }}</span>
+                <span class="hidden sm:inline">{{ footer?.nitro }}</span>
               </button>
             </UiTooltipTrigger>
-            <UiTooltipContent class="z-[70] max-w-[260px]">{{ footer.nitroTitle }}</UiTooltipContent>
+            <UiTooltipContent class="z-[70] max-w-[260px]">{{ footer?.nitroTitle }}</UiTooltipContent>
           </UiTooltip>
           <UiTooltip>
             <UiTooltipTrigger as-child>
               <button
                 type="button"
-                :aria-label="`${footer.deleteLabel} ${footer.redis}`"
+                :aria-label="`${footer?.deleteLabel} ${footer?.redis}`"
                 class="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-redis-border bg-redis-tint px-3 py-2 text-sm font-medium text-[#f4b4b4] transition-all hover:border-[rgba(248,113,113,0.55)] hover:bg-[rgba(248,113,113,0.16)] sm:px-4"
                 @click="clearRedis"
               >
                 <img src="/svg/marks/redis.svg" alt="" width="24" height="24" class="h-4 w-auto">
-                <span class="hidden sm:inline">{{ footer.redis }}</span>
+                <span class="hidden sm:inline">{{ footer?.redis }}</span>
               </button>
             </UiTooltipTrigger>
-            <UiTooltipContent class="z-[70] max-w-[260px]">{{ footer.redisTitle }}</UiTooltipContent>
+            <UiTooltipContent class="z-[70] max-w-[260px]">{{ footer?.redisTitle }}</UiTooltipContent>
           </UiTooltip>
         </div>
       </div>
