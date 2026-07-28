@@ -203,9 +203,19 @@ yarn dev         # http://localhost:3000
 | `yarn preview` | Preview the production build locally |
 | `yarn lint` | ESLint (`eslint . --fix`) |
 | `yarn typecheck` | `nuxt typecheck` (vue-tsc, strict) |
+| `yarn test` | Vitest unit tests |
 
 ESLint runs on staged files via a Husky pre-commit hook (lint-staged).
 Typechecking runs in CI, not on commit (it's project-wide).
+
+## Testing
+
+Unit tests run on **Vitest** (`yarn test`). The APOD **use-cases** are tested
+against a Map-backed fake cache and a stub NASA source — no Redis or NASA needed
+— covering cache hits, miss → backfill, the list's per-day pre-caching, and
+image-dimension probing. `getApodEmbed` is covered for its URL classification
+(YouTube / Vimeo / file / external). CI runs them on every push
+(lint → typecheck → test → build), and the Netlify build runs them too.
 
 ## Pages
 
