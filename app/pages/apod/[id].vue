@@ -112,7 +112,7 @@ const paragraphs = computed(() => {
     v-if="item"
     class="container mx-auto min-h-screen px-5 pb-40 pt-32 md:px-8 [animation:fadeUp_0.4s_ease]"
   >
-   <div class="text-center lg:text-left">
+   <div class="text-left">
     <NuxtLink
       to="/apod"
       class="mb-8 inline-flex items-center gap-2 text-sm text-text-muted transition-colors hover:text-foreground"
@@ -125,7 +125,7 @@ const paragraphs = computed(() => {
       {{ listPage?.title }}
     </div>
     <h1
-      class="m-0 mx-auto max-w-[92%] text-balance text-center font-serif text-[clamp(40px,4.6vw,56px)] font-normal leading-[1.08] tracking-tight lg:mx-0 lg:max-w-none lg:text-left"
+      class="m-0 text-balance font-serif text-[clamp(40px,4.6vw,56px)] font-normal leading-[1.08] tracking-tight"
     >
       {{ item.title }}
     </h1>
@@ -134,7 +134,7 @@ const paragraphs = computed(() => {
     </p>
 
     <!-- Body: image (left) + narrow description column (right) on lg+ -->
-    <div class="mt-8 grid gap-8 text-center lg:grid-cols-[1fr_320px] lg:items-start lg:text-left">
+    <div class="mt-8 grid gap-8 text-left lg:grid-cols-[1fr_320px] lg:items-start">
      <div>
       <!-- Media -->
       <div
@@ -257,7 +257,7 @@ const paragraphs = computed(() => {
       </div>
 
       <!-- Fallback: link out to the source -->
-      <div v-else class="p-8 text-center">
+      <div v-else class="p-8">
         <a
           :href="item.url"
           target="_blank"
