@@ -137,7 +137,7 @@ const clearRedis = async () => {
     >
       <!-- Left: the cache chain with live full/empty dots + active highlight -->
       <ClientOnly>
-        <div class="flex flex-wrap items-center justify-start gap-x-2 gap-y-2">
+        <div class="flex max-w-full flex-nowrap items-center justify-start gap-x-2 overflow-x-auto">
           <div class="flex items-center gap-1">
             <template v-for="(node, i) in chain" :key="node.key">
               <span
@@ -175,7 +175,7 @@ const clearRedis = async () => {
            layers). Each group wraps as a unit, so on mobile they stack cleanly
            and stay labelled. -->
       <div
-        class="flex flex-nowrap items-center justify-center gap-3 sm:gap-4 xl:ml-auto"
+        class="flex w-full flex-nowrap items-center justify-between gap-3 sm:w-auto sm:justify-center sm:gap-4 xl:ml-auto"
       >
         <!-- Invalidate group: Vue Query (client) — revalidate → refetch -->
         <div class="flex items-center gap-2">
