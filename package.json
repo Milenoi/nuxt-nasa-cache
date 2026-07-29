@@ -34,6 +34,7 @@
     "eslint": "^10.8.0",
     "husky": "^9.1.7",
     "nuxt": "^4.5.0",
+    "nuxt-schema-org": "^6.2.8",
     "shadcn-nuxt": "^2.8.0",
     "sharp": "^0.35.3",
     "shiki": "^4.3.1",

@@ -25,6 +25,17 @@ useSeoMeta({
   twitterImage: ogImage,
 });
 
+// Root of the Schema.org graph. The Person identity behind it comes from
+// `schemaOrg.identity` in nuxt.config and is linked in as publisher by the
+// module, so it is configured once instead of per page.
+useSchemaOrg([
+  defineWebSite({
+    name: siteName,
+    description: siteDescription,
+    inLanguage: language,
+  }),
+]);
+
 useHead({
   htmlAttrs: {
     lang: language,

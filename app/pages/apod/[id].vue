@@ -39,6 +39,35 @@ useSeoMeta({
   // twitter:* inherit from og:* (X's documented fallback), so we don't repeat them.
 });
 
+// Structured data: the entry as this page's primary image or as its video,
+// linked into the WebPage node instead of floating next to it. `mediaType:
+// "other"` gets neither, only the page itself. Name and description are
+// explicit, otherwise the module falls back to the site-wide description.
+// `item` is already resolved here because useFetchApod awaits suspense.
+const { siteUrl } = useRuntimeConfig().public;
+
+useSchemaBreadcrumb(item.value?.title);
+
+const entryMedia = computed(() => {
+  const entry = item.value;
+  if (entry?.mediaType === "image") {
+    return { primaryImageOfPage: getApodImageNode(entry) };
+  }
+  if (entry?.mediaType === "video") {
+    return { video: getApodVideoNode(entry, siteUrl) };
+  }
+  return {};
+});
+
+useSchemaOrg([
+  defineWebPage({
+    name: () => item.value?.title,
+    description: () => seoDescription.value,
+    datePublished: () => item.value?.date,
+    ...entryMedia.value,
+  }),
+]);
+
 const embed = computed(() =>
   item.value?.mediaType === "video" ? getApodEmbed(item.value.url) : null,
 );

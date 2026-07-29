@@ -21,6 +21,22 @@ const {data, serverSource, fromClientCache} = await useFetchApod<ApodList>();
 // Newest APOD, any media type, the hero reflects today's actual entry.
 const latestApod = computed(() => data.value?.entries?.[0] ?? null);
 
+// Structured data. Name and description are set explicitly: the module falls
+// back to the site-wide description otherwise, which would make every page in
+// the graph describe itself identically.
+// Today's APOD rides along as the page's primary image, but only for image
+// entries: a video `url` is a player, not an image. `latestApod` is already
+// resolved here because useFetchApod awaits suspense.
+useSchemaOrg([
+    defineWebPage({
+        name: () => seo.value?.title,
+        description: () => seo.value?.description,
+        ...(latestApod.value?.mediaType === "image"
+            ? { primaryImageOfPage: getApodImageNode(latestApod.value) }
+            : {}),
+    }),
+]);
+
 // The ambient background media (video / embed / image) + poster + reduced-motion
 // autoplay handler live in useApodHero, so this page stays about layout.
 const {heroVideo, heroImage, heroVideoPoster, heroIframe, onHeroLoaded}

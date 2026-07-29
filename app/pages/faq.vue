@@ -13,25 +13,23 @@ useSeoMeta({
 });
 
 // FAQPage structured data, built from the same items the page renders, so the
-// rich result can never describe questions the page does not show.
-useHead({
-    script: [
-        {
-            type: "application/ld+json",
-            innerHTML: computed(() =>
-                JSON.stringify({
-                    "@context": "https://schema.org",
-                    "@type": "FAQPage",
-                    mainEntity: (faq.value?.items ?? []).map((item) => ({
-                        "@type": "Question",
-                        name: item.q,
-                        acceptedAnswer: { "@type": "Answer", text: item.a },
-                    })),
-                }),
-            ),
-        },
-    ],
-});
+// rich result can never describe questions the page does not show. Emitted
+// through nuxt-schema-org, which links the questions into the page graph
+// instead of dropping a standalone JSON-LD block next to it.
+useSchemaBreadcrumb();
+useSchemaOrg([
+    defineWebPage({
+        "@type": "FAQPage",
+        name: () => seo.value?.title,
+        description: () => seo.value?.description,
+    }),
+    ...(faq.value?.items ?? []).map((item) =>
+        defineQuestion({
+            name: item.q,
+            acceptedAnswer: item.a,
+        }),
+    ),
+]);
 </script>
 
 <template>

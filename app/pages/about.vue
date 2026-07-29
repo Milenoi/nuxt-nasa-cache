@@ -18,6 +18,16 @@ useSeoMeta({
     ogDescription: () => seo.value?.description,
 });
 
+// Structured data: an AboutPage, plus the breadcrumb trail.
+useSchemaBreadcrumb();
+useSchemaOrg([
+    defineWebPage({
+        "@type": "AboutPage",
+        name: () => seo.value?.title,
+        description: () => seo.value?.description,
+    }),
+]);
+
 const githubUrl = computed(() => content.value?.header.githubUrl);
 
 // Human-readable label for the layer that served this content (the same

@@ -20,6 +20,22 @@ useSeoMeta({
     ogDescription: () => seo.value?.description,
 });
 
+// Structured data: this page explains the caching chain, so it is a TechArticle.
+// No datePublished: the content has no publication date and inventing one would
+// be a false claim. The author resolves to the site identity from nuxt.config.
+useSchemaBreadcrumb();
+useSchemaOrg([
+    defineWebPage({
+        name: () => seo.value?.title,
+        description: () => seo.value?.description,
+    }),
+    defineArticle({
+        "@type": "TechArticle",
+        headline: () => how.value?.heading,
+        description: () => seo.value?.description,
+    }),
+]);
+
 type StepMeta = {
     img: string;
     nodeBorder: string;

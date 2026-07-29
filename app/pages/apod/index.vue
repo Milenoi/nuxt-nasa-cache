@@ -10,12 +10,31 @@ const seo = computed(() => content.value?.seo?.apod);
 
 const { data, serverSource, isPending } = await useFetchApod<ApodList>();
 
+const { siteUrl } = useRuntimeConfig().public;
+
 useSeoMeta({
   title: () => seo.value?.title,
   description: () => seo.value?.description,
   ogTitle: () => seo.value?.title,
   ogDescription: () => seo.value?.description,
 });
+
+// Structured data: this page is a collection of the last 60 entries.
+// The ItemList deliberately describes ALL entries, not the filtered ones: the
+// canonical URL drops the ?type= query, so every filter variant collapses to
+// /apod, and a filtered list would make the same canonical page claim something
+// different depending on which filter URL was crawled.
+useSchemaBreadcrumb();
+useSchemaOrg([
+  defineWebPage({
+    "@type": "CollectionPage",
+    name: () => seo.value?.title,
+    description: () => seo.value?.description,
+  }),
+  defineItemList({
+    itemListElement: getApodListItems(data.value?.entries ?? [], siteUrl),
+  }),
+]);
 
 // Media-type filter (all / image / video), synced to the URL query.
 const mediaFilter = useRouteQuery<"all" | ApodMediaType>("type", "all", {

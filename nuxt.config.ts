@@ -3,17 +3,41 @@
 import tailwindcss from "@tailwindcss/vite";
 import imageConfig from "./app/utils/getImageConfig";
 
+// Single source for site identity: `site` feeds nuxt-schema-org (via
+// nuxt-site-config), `runtimeConfig.public` feeds the meta tags in app.vue.
+// Kept as one constant so the canonical URL can't drift between the two.
+const site = {
+  url: "https://nuxt-cache-project.netlify.app",
+  name: "Nuxt Cache Project",
+  description:
+    "A Nuxt 4 demo of multi-layer caching (Redis + TanStack Query) over the NASA APOD API.",
+};
+
 export default defineNuxtConfig({
   ssr: true,
 
   runtimeConfig: {
     nasaApiKey: "",
     public: {
-      siteName: "Nuxt Cache Project",
-      siteDescription:
-        "A Nuxt 4 demo of multi-layer caching (Redis + TanStack Query) over the NASA APOD API.",
-      siteUrl: "https://nuxt-cache-project.netlify.app",
+      siteName: site.name,
+      siteDescription: site.description,
+      siteUrl: site.url,
       language: "en-US",
+    },
+  },
+
+  site,
+
+  schemaOrg: {
+    // The linked identity behind every page. A Person, not an Organization:
+    // this is a personal demo, and an organization that doesn't exist would be
+    // an invented claim. The sameAs profiles are the links the site already
+    // shows (header GitHub link, about-page credit).
+    identity: {
+      type: "Person",
+      name: "Melanie Stief",
+      url: site.url,
+      sameAs: ["https://github.com/Milenoi", "https://viridis.de"],
     },
   },
 
@@ -35,7 +59,13 @@ export default defineNuxtConfig({
   // Global stylesheet: Tailwind v4 entry + design tokens + toast base styles.
   css: ["~/assets/css/tailwind.css", "vue-sonner/style.css"],
 
-  modules: ["@nuxt/eslint", "@nuxt/image", "@nuxt/fonts", "shadcn-nuxt"],
+  modules: [
+    "@nuxt/eslint",
+    "@nuxt/image",
+    "@nuxt/fonts",
+    "shadcn-nuxt",
+    "nuxt-schema-org",
+  ],
 
   // shadcn-vue: no component prefix, components live under ~/components/ui.
   shadcn: {
