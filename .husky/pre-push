@@ -1,0 +1,2 @@
+# Slower than the commit hooks, so it guards the push instead of every commit.
+yarn typecheck
