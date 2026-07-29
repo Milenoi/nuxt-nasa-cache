@@ -226,8 +226,9 @@ yarn dev         # http://localhost:3000
 | `yarn typecheck` | `nuxt typecheck` (vue-tsc, strict) |
 | `yarn test` | Vitest unit tests |
 
-ESLint runs on staged files via a Husky pre-commit hook (lint-staged).
-Typechecking runs in CI, not on commit (it's project-wide).
+Husky wires the checks into git: **pre-commit** runs ESLint on the staged files
+(lint-staged) plus the test suite, **pre-push** runs the project-wide typecheck,
+which is too slow (~30s) for every commit. CI runs all of them again.
 
 ## Testing
 
