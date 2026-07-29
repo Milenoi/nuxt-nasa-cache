@@ -5,7 +5,7 @@ import type { ContentSource, SiteContent } from "#shared/types";
  * Synchronous accessor for the site content (labels, nav, hero/how/about copy,
  * per-page SEO). The content is prefetched into the Vue Query cache by the
  * vue-query plugin on the server and hydrated on the client, so this reads it
- * straight from the shared cache — no `await`, no Suspense — which lets even
+ * straight from the shared cache, no `await`, no Suspense, which lets even
  * layout chrome (header, footer) consume it without becoming async components.
  *
  * - `content`: the reactive payload (undefined only before the cache is warm).

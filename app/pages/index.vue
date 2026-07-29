@@ -18,7 +18,7 @@ useSeoMeta({
 // Pull the latest APOD so the hero itself is delivered through Redis + TanStack.
 const {data, serverSource, fromClientCache} = await useFetchApod<ApodList>();
 
-// Newest APOD, any media type — the hero reflects today's actual entry.
+// Newest APOD, any media type, the hero reflects today's actual entry.
 const latestApod = computed(() => data.value?.entries?.[0] ?? null);
 
 // The ambient background media (video / embed / image) + poster + reduced-motion
@@ -101,11 +101,11 @@ const serverPill = computed(() => {
              next breakpoint, capped at the 1920 page wrapper (a phone pulls 640w,
              desktop 1920w). No width/height/fit: the hero fills a fixed-height,
              absolutely positioned stage, so CSS object-cover handles crop and
-             there is no CLS to reserve against. quality 60 — it sits behind a
+             there is no CLS to reserve against. quality 60, it sits behind a
              gradient and text and slow-zooms, so the extra bytes of q80 buy no
              visible fidelity. No `preload` prop: @nuxt/image 2.0.0 only puts
              `imagesrcset` on the preload link for density (x) descriptors, so a
-             width-based srcset like this one preloads the bare `href` — the
+             width-based srcset like this one preloads the bare `href`, the
              widest variant, which no viewport ever renders. That downloaded a
              second, unused hero (107 KB) alongside the right one. The stage sits
              at the top of the SSR markup, so the preload scanner finds it

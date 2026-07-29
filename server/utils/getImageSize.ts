@@ -8,7 +8,7 @@ const PROBE_TIMEOUT_MS = 3000;
  * Read an image's intrinsic width/height by streaming only its header bytes
  * (not the full file). Used to store the aspect ratio in the cache so the detail
  * page can reserve the exact box before the image loads (avoids layout shift).
- * Returns null on any failure or timeout — a missing size just falls back to no
+ * Returns null on any failure or timeout, a missing size just falls back to no
  * reservation, never breaks or delays the response.
  */
 export const getImageSize = async (

@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import type { ContentSource, SiteContent } from "#shared/types";
-// The bundled JSON is the origin for site content — the equivalent of NASA for
+// The bundled JSON is the origin for site content, the equivalent of NASA for
 // the APOD data, except it ships with the app instead of coming over the wire.
 import staticText from "../../app/assets/json/static-text.json";
 
@@ -8,7 +8,7 @@ const CACHE_TTL = 86400; // 24h
 
 // Version the cache by a hash of the bundled content, so any edit to the copy
 // (a new section, a changed shape) yields a NEW key. That way a stale payload
-// with an outdated shape can never be served after a content change — the old
+// with an outdated shape can never be served after a content change, the old
 // key is simply orphaned and expires. Without this, adding a section left the
 // previous cached payload (missing that section) live for up to CACHE_TTL.
 const CONTENT_VERSION = createHash("sha1")
@@ -32,7 +32,7 @@ type ContentPayload = SiteContent;
  *   Vue Query (client) -> Nitro SWR (server) -> Redis (server) -> JSON (origin)
  *
  * The content never changes at runtime, so this is a showcase rather than a
- * necessity — it demonstrates that any content, not just remote API data, can
+ * necessity, it demonstrates that any content, not just remote API data, can
  * ride the same layered cache. The `_source` we attach tells the UI which layer
  * actually served this response.
  */

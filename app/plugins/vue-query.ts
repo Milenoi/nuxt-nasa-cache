@@ -29,7 +29,7 @@ export default defineNuxtPlugin(async (nuxt) => {
 
   if (import.meta.server) {
     // Warm the site-content query before anything renders, so every component
-    // (pages AND layout chrome) can read it synchronously via useSiteContent —
+    // (pages AND layout chrome) can read it synchronously via useSiteContent,
     // no async components, no Suspense. It rides the same cache chain as APOD.
     await queryClient.prefetchQuery({
       queryKey: ["content"],

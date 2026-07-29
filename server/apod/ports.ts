@@ -1,11 +1,11 @@
 // Ports: the interfaces the APOD core depends on. The use-cases talk ONLY to
 // these abstractions; the concrete tools (Redis, NASA, image probing) implement
-// them as adapters. This is what inverts the dependency — the core owns the
+// them as adapters. This is what inverts the dependency, the core owns the
 // contract, infrastructure conforms to it.
 import type { ApodApiEntry } from "#server/utils/apodSchema";
 
 // A generic key/value cache the core reads from and writes to. It has no idea
-// Redis exists behind it — could just as well be an in-memory Map (that's what
+// Redis exists behind it, could just as well be an in-memory Map (that's what
 // the tests inject).
 export interface CachePort {
   // Return the value stored under `key`, or null on a miss. `<T>` lets the

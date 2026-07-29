@@ -19,7 +19,7 @@ useSeoMeta({
   ogImage,
   ogImageWidth: 1200,
   ogImageHeight: 630,
-  // twitter:title/description are omitted — X falls back to the og:* tags, so
+  // twitter:title/description are omitted, X falls back to the og:* tags, so
   // duplicating them is deprecated noise. Card type + image are still explicit.
   twitterCard: "summary_large_image",
   twitterImage: ogImage,
@@ -78,7 +78,7 @@ useHead({
   ],
 });
 
-// Vue Query Devtools — dev only, lazy-loaded so it is tree-shaken out of prod.
+// Vue Query Devtools, dev only, lazy-loaded so it is tree-shaken out of prod.
 const VueQueryDevtools = import.meta.dev
   ? defineAsyncComponent(() =>
       import("@tanstack/vue-query-devtools").then((m) => m.VueQueryDevtools),

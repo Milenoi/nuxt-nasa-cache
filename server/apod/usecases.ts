@@ -21,7 +21,7 @@ export const loadApodDetail = async (
 
     const cached = await deps.cache.get<ApodEntry>(key);
     if (cached) {
-        // List pre-caches entries without dimensions — backfill them once.
+        // List pre-caches entries without dimensions, backfill them once.
         const enriched = await withDimensions(cached, deps);
         if (enriched !== cached) await deps.cache.set(key, enriched, CACHE_TTL);
         return {entry: enriched, source: "redis"};

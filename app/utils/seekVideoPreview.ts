@@ -1,5 +1,5 @@
 /**
- * Seek a video to a representative preview frame — `fraction` of the way in —
+ * Seek a video to a representative preview frame, `fraction` of the way in,
  * past the (often black) opening frame.
  *
  * Used as a `loadedmetadata` handler for APOD videos that have no NASA

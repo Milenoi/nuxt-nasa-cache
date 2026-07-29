@@ -6,7 +6,7 @@ const vimeoId = (u: string) => u.match(/vimeo\.com\/(?:video\/)?(\d+)/)?.[1];
 
 /**
  * Derives the hero's ambient background from the latest APOD entry: a direct
- * video file, a YouTube/Vimeo embed, or an image — plus a representative-frame
+ * video file, a YouTube/Vimeo embed, or an image, plus a representative-frame
  * poster (only when NASA gives a thumbnail) and a reduced-motion-aware autoplay
  * handler. Extracted so index.vue stays about layout, not media plumbing.
  */

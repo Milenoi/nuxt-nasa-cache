@@ -3,8 +3,8 @@
 A **Nuxt 4** demo that shows how to make a slow, rate-limited third-party API
 feel instant by layering caches around it. It fetches NASA's **Astronomy Picture
 of the Day (APOD)**, validates and normalizes it on the server, and serves it
-through a fall-through **cache chain** — **TanStack Vue Query** (client), a
-**Nitro** stale-while-revalidate cache and **Redis** on the server — with
+through a fall-through **cache chain**, **TanStack Vue Query** (client), a
+**Nitro** stale-while-revalidate cache and **Redis** on the server, with
 **Netlify's Image CDN** handling image delivery. The UI is a custom, dark-only
 editorial design built on **shadcn-vue + Tailwind v4**.
 
@@ -23,7 +23,7 @@ editorial design built on **shadcn-vue + Tailwind v4**.
 | Server cache | Redis (via Nitro `unstorage` driver, 24h TTL) |
 | Client cache | TanStack Vue Query (+ `localStorage` persister) |
 | Validation | Zod (validates the NASA response at the boundary) |
-| Images | `@nuxt/image` — IPX (dev) / Netlify Image CDN (prod) |
+| Images | `@nuxt/image`, IPX (dev) / Netlify Image CDN (prod) |
 | Runtime | Node 24 · Yarn 4 |
 | Quality | ESLint (flat config) · `nuxt typecheck` · GitHub Actions CI |
 
@@ -47,7 +47,7 @@ talks to NASA directly, so the API key stays server-side.
 
 ### The cache chain
 
-Each layer caches a **different** thing — this is the core lesson of the project:
+Each layer caches a **different** thing, this is the core lesson of the project:
 
 1. **TanStack Vue Query (client):** the normalized APOD **JSON**, kept in memory
    and persisted to `localStorage`, so repeat visits render instantly. The server
@@ -56,13 +56,13 @@ Each layer caches a **different** thing — this is the core lesson of the proje
 2. **Nitro (server, SWR):** an in-process, in-memory stale-while-revalidate cache
    in front of Redis. A warm hit never leaves the server process (beating the
    Redis network hop); while stale it serves the old value instantly and
-   revalidates in the background — no request waits.
+   revalidates in the background, no request waits.
 3. **Redis (server):** the persistent, shared cache-aside store (24h TTL), read
    by every visitor. Nitro falls through to Redis on a miss.
 4. **NASA APOD API (origin):** rate-limited and slow, hit only when every cache
    above is empty.
 
-Separately, the **image files** ride the browser HTTP cache + Netlify Image CDN —
+Separately, the **image files** ride the browser HTTP cache + Netlify Image CDN,
 Vue Query never stores image binaries, which is why images have their own "slow
 first load, instant second load" layer.
 
@@ -71,17 +71,17 @@ behind APOD follows a light ports-&-adapters split so the cache logic is
 unit-testable without Redis or NASA (see [Project structure](#project-structure)).
 
 > Note: the APOD list key includes the date range ("last 60 days, ending
-> yesterday"), so it rotates once per calendar day — the first request each day
+> yesterday"), so it rotates once per calendar day, the first request each day
 > is a miss (one rebuild), then fast for the rest of the day. Loading the list
 > also pre-caches each day under its own `apod:detail:<date>` key, so opening any
 > detail page is a Redis hit rather than a fresh NASA request.
 
 ### Watch the caches at work
 
-- **Cache-source badges** — the hero and every gallery card show which layer
+- **Cache-source badges**, the hero and every gallery card show which layer
   served the data: the Vue Query mark (client cache) next to the Redis mark
   (server cache), or the NASA meatball for a fresh fetch.
-- **Cache footer** — a fixed bar reports the last real fetch's source and
+- **Cache footer**, a fixed bar reports the last real fetch's source and
   timing, and offers per-layer controls: *invalidate* Vue Query (drop the browser
   copy and refetch) and *clear* Nitro or Redis (empty a server layer; clear both
   and the next load is a genuine cold start from NASA). The `/how` page walks
@@ -103,7 +103,7 @@ config **and** `netlify.toml` (`remote_images`).
 Two rules keep the responsive part honest, because getting either wrong makes
 every device download the widest variant:
 
-- The `screens` ladder is **Tailwind's breakpoints minus 1px** — Nuxt Image emits
+- The `screens` ladder is **Tailwind's breakpoints minus 1px**, Nuxt Image emits
   `(max-width: …)` where Tailwind uses `(min-width: …)`, so a plain `1024` would
   still serve the `md` width at exactly 1024px. With the offset, `lg:` in a
   `sizes` prop covers exactly the viewports where Tailwind's `lg:` classes apply.
@@ -120,12 +120,12 @@ instantly and revalidates in the background. The APOD routes send **no**
 cache-control header at all, so Netlify forwards every request and their
 Redis/NASA indicator is always live.
 
-This is the only page-level caching in the project — no prerendering, no ISR. The
+This is the only page-level caching in the project, no prerendering, no ISR. The
 rendered HTML is deliberately left alone: a page served from a cache cannot report
 which cache answered, because its badges are written at render time. That also
 explains the one rough edge: `/` shows the cache pills *and* carries the header,
 so on a warm CDN hit those pills are as old as the cached copy (up to an hour).
-It only affects a cold page load — navigating inside the app or using the footer
+It only affects a cold page load, navigating inside the app or using the footer
 controls refetches through `/api/apod`, which is never cached.
 
 ---
@@ -145,7 +145,7 @@ app/                  # application code (Nuxt 4 srcDir → ~/ and @/ resolve he
   lib/                 # shadcn-vue helpers (cn)
   assets/              # tailwind.css, static-text.json
   app.vue · error.vue
-server/                # Nitro server — stays at the root (#server/...)
+server/                # Nitro server, stays at the root (#server/...)
   api/apod.get.ts      # cache-chain route (thin: DI + Nitro SWR + _source badge)
   api/content.get.ts   # site copy served through the same cache chain
   apod/                # framework-agnostic core + adapters (see below)
@@ -163,7 +163,7 @@ logic is unit-testable without Redis or NASA:
 server/apod/
   ports.ts             # interfaces: CachePort, ApodSourcePort, MediaProbePort
   mapper.ts            # pure: normalize, date range, cache keys
-  usecases.ts          # loadApodList / loadApodDetail — talk only to the ports
+  usecases.ts          # loadApodList / loadApodDetail, talk only to the ports
   redisCache.ts        # CachePort  → Redis (useStorage)
   nasaSource.ts        # ApodSourcePort → NASA ($fetch + Zod)
   imageProbe.ts        # MediaProbePort → image dimension probing
@@ -181,7 +181,7 @@ server stays at the project root (not under `app/`).
 
 ### Prerequisites
 
-- **Node 24** (`.nvmrc`) — run `nvm use` (or `nvm install`)
+- **Node 24** (`.nvmrc`), run `nvm use` (or `nvm install`)
 - **Yarn 4** (bundled via `packageManager`, enable with `corepack enable`)
 
 ### Installation
@@ -232,22 +232,22 @@ Typechecking runs in CI, not on commit (it's project-wide).
 ## Testing
 
 Unit tests run on **Vitest** (`yarn test`). The APOD **use-cases** are tested
-against a Map-backed fake cache and a stub NASA source — no Redis or NASA needed
-— covering cache hits, miss → backfill, the list's per-day pre-caching, and
+against a Map-backed fake cache and a stub NASA source, no Redis or NASA needed
+covering cache hits, miss → backfill, the list's per-day pre-caching, and
 image-dimension probing. `getApodEmbed` is covered for its URL classification
 (YouTube / Vimeo / file / external). CI runs them on every push
 (lint → typecheck → test → build), and the Netlify build runs them too.
 
 ## Pages
 
-- **`/`** — full-bleed hero built from the latest APOD, linking to the gallery.
-- **`/apod`** — the gallery: last 60 days, filterable by images and videos
+- **`/`**, full-bleed hero built from the latest APOD, linking to the gallery.
+- **`/apod`**, the gallery: last 60 days, filterable by images and videos
   (`?type=`), with loading skeletons and per-card cache badges.
-- **`/apod/[date]`** — a single day; image, `<video>`, or embed depending on
+- **`/apod/[date]`**, a single day; image, `<video>`, or embed depending on
   media type, with a two-column layout on large screens.
-- **`/how`** — the caching architecture as a timeline, a usage guide, and a
+- **`/how`**, the caching architecture as a timeline, a usage guide, and a
   "what this is not" section on the project's deliberate limits.
-- **`/about`** — a short project blurb and the tech-stack table.
+- **`/about`**, a short project blurb and the tech-stack table.
 
 ## Deployment
 
@@ -256,7 +256,7 @@ auto-detected → SSR via serverless functions). To deploy your own copy:
 
 1. Connect the repo to Netlify.
 2. Set the environment variables (from `.env`) in **Site settings → Environment
-   variables** — plus `NODE_VERSION=24`.
+   variables**, plus `NODE_VERSION=24`.
 3. Push to `main`.
 
 ## Continuous integration
@@ -272,4 +272,4 @@ Feel free to open a pull request.
 
 ## License
 
-MIT — see the [LICENSE](LICENSE) file.
+MIT, see the [LICENSE](LICENSE) file.

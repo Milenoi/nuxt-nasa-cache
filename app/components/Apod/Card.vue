@@ -67,7 +67,7 @@ const imageSrc = computed(() =>
     class="group flex h-full flex-col overflow-hidden rounded-2xl border border-muted bg-surface-card"
   >
     <div class="relative aspect-[3/2] shrink-0 overflow-hidden">
-      <!-- One px width per breakpoint — never a bare vw value, which does not
+      <!-- One px width per breakpoint, never a bare vw value, which does not
            resolve against the screens config and collapses the srcset to a
            useless 1w ladder. The widths are the real column width of the grid:
            full width below sm, two columns from sm, three from lg (gap-5 and the

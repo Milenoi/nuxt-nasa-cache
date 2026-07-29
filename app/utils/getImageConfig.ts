@@ -5,7 +5,7 @@ const shared = {
   domains: ["apod.nasa.gov", "img.youtube.com", "i.ytimg.com"],
   // Tailwind's breakpoints minus 1px, so a `sizes` prop can be written in the
   // units the layout is built in: `lg:` here covers exactly the viewports where
-  // Tailwind's `lg:` classes apply. The -1 is not a typo — Nuxt Image emits
+  // Tailwind's `lg:` classes apply. The -1 is not a typo, Nuxt Image emits
   // `(max-width: <screen>)` while Tailwind uses `(min-width: <bp>)`, so a plain
   // 1024 would still serve the md width at exactly 1024px wide.
   // Any other ladder silently shifts every media query in every `sizes`

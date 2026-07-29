@@ -48,7 +48,7 @@ const handleClearError = () => clearError({ redirect: "/" });
         <ellipse cx="54" cy="30" rx="22" ry="6" />
         <!-- neck -->
         <path d="M72 27 L88 24 L88 36 L72 33 Z" />
-        <!-- saucer (large, flat — TNG) -->
+        <!-- saucer (large, flat, TNG) -->
         <ellipse cx="99" cy="30" rx="21" ry="10" />
       </svg>
     </div>

@@ -63,7 +63,7 @@ const toggleMute = () => {
   const video = detailVideo.value;
   if (!video) return;
   video.muted = !video.muted;
-  // Unmuting a video whose volume was dragged to 0 would stay silent — restore it.
+  // Unmuting a video whose volume was dragged to 0 would stay silent, restore it.
   if (!video.muted && video.volume === 0) video.volume = 1;
 };
 
@@ -94,7 +94,7 @@ const imgHeight = computed(() => {
 // NASA source); we then render the raw NASA image instead.
 const rawImage = ref(false);
 
-// NASA delivers the explanation as one blob — split it into readable paragraphs
+// NASA delivers the explanation as one blob, split it into readable paragraphs
 // of ~2 sentences each.
 const paragraphs = computed(() => {
   const text = item.value?.explanation ?? "";
@@ -150,7 +150,7 @@ const paragraphs = computed(() => {
       <div v-if="item.mediaType === 'image'" class="w-full lg:aspect-[3/2]">
         <!-- Some APOD originals are huge (6000px+) and NASA can be slow, so the
              Netlify image optimizer times out (502). Fall back to the raw NASA
-             image on error — the browser has no such fetch cap. -->
+             image on error, the browser has no such fetch cap. -->
         <img
           v-if="rawImage"
           :src="item.hdurl || item.url"
@@ -159,7 +159,7 @@ const paragraphs = computed(() => {
           :height="imgHeight"
           class="block h-auto w-full lg:h-full lg:object-contain"
         >
-        <!-- One px width per breakpoint — never a bare vw value, which does not
+        <!-- One px width per breakpoint, never a bare vw value, which does not
              resolve against the screens config and collapses the srcset to a
              single-candidate ladder (every device then pulls the widest image).
              The widths follow this layout: full container width up to lg, then

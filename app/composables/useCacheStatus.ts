@@ -10,7 +10,7 @@ interface ServerCacheStatus {
 /**
  * Live full/empty state of the server cache layers (Nitro + Redis), shared across
  * the app via a single keyed request. `activeServerSource` derives which server
- * layer would serve the NEXT request — the frontmost layer that still holds data
+ * layer would serve the NEXT request, the frontmost layer that still holds data
  * (Nitro, else Redis, else NASA). Clearing a layer flips it instantly.
  *
  * Call `refresh()` after a clear (or a fetch) to update everything.

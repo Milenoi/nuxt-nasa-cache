@@ -4,7 +4,7 @@ import type {ApodDeps} from "#server/apod/ports";
 import type {ApodApiEntry} from "#server/utils/apodSchema";
 import type {ApodEntry} from "#shared/types";
 
-// Fake CachePort backed by a plain Map — the whole point: no Redis needed.
+// Fake CachePort backed by a plain Map, the whole point: no Redis needed.
 const makeCache = () => {
     const store = new Map<string, unknown>();
     return {
@@ -17,7 +17,7 @@ const makeCache = () => {
     };
 };
 
-// A raw NASA image entry — the shape the source port returns.
+// A raw NASA image entry, the shape the source port returns.
 const rawImage = (date: string): ApodApiEntry => ({
     date,
     title: `Picture ${date}`,

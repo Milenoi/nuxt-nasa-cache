@@ -24,7 +24,7 @@ const snippets = [
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 24 * 60 * 60 * 1000, // 24h — a repeat view never refetches
+      staleTime: 24 * 60 * 60 * 1000, // 24h, a repeat view never refetches
       refetchOnMount: false,
       refetchOnWindowFocus: false,
       retry: 2,
@@ -33,7 +33,7 @@ const queryClient = new QueryClient({
 });
 
 // The server dehydrates the cache into the Nuxt payload; the client hydrates
-// from it — so there is no duplicate fetch right after hydration.
+// from it, so there is no duplicate fetch right after hydration.
 if (import.meta.server) {
   nuxt.hooks.hook("app:rendered", () => {
     vueQueryState.value = dehydrate(queryClient);
@@ -45,7 +45,7 @@ if (import.meta.client) hydrate(queryClient, vueQueryState.value);`,
     key: "nitro",
     file: "server/api/apod.get.ts",
     code: `// The Nitro layer wraps the use-case in an in-process, stale-while-revalidate
-// cache. A warm hit never leaves the server process — beating the Redis hop.
+// cache. A warm hit never leaves the server process, beating the Redis hop.
 const throughNitro = defineCachedFunction(
   async (d: string): Promise<ApodEntry> => {
     const { entry, source } = await loadApodDetail(d, deps);
@@ -55,7 +55,7 @@ const throughNitro = defineCachedFunction(
   {
     name: "apod-detail",
     getKey: (d: string) => d,
-    maxAge: 30,          // fresh for 30s — answers directly
+    maxAge: 30,          // fresh for 30s, answers directly
     staleMaxAge: 86400,  // then serves the stale value instantly...
     swr: true,           // ...and refreshes in the background, no request waits
   },
@@ -66,7 +66,7 @@ const entry = await throughNitro(date);`,
     key: "redis",
     file: "server/apod/usecases.ts",
     code: `// Redis sits behind the CachePort: a persistent, shared cache-aside store
-// (24h TTL). The use-case talks only to the port — Redis is an injected adapter,
+// (24h TTL). The use-case talks only to the port, Redis is an injected adapter,
 // so this exact logic runs against a plain Map in the unit tests.
 export const loadApodDetail = async (date: string, deps: ApodDeps) => {
   const cached = await deps.cache.get<ApodEntry>(detailKey(date));
@@ -82,7 +82,7 @@ export const loadApodDetail = async (date: string, deps: ApodDeps) => {
   {
     key: "nasa",
     file: "server/apod/nasaSource.ts",
-    code: `// The origin: NASA's APOD API — rate-limited and slow, so it is the last
+    code: `// The origin: NASA's APOD API, rate-limited and slow, so it is the last
 // resort. The response is validated before anything downstream trusts it.
 const fetchFromNasa = async <T>(url: string, schema: ZodType<T>): Promise<T> => {
   try {

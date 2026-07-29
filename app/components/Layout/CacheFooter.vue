@@ -63,12 +63,12 @@ const sourceLabel = computed(() => {
   return "NASA";
 });
 
-// The active SERVER layer (frontmost full) — highlighted in the chain and shown
+// The active SERVER layer (frontmost full), highlighted in the chain and shown
 // by the page badge.
 const activeLayer = computed<ApodSource>(() => activeServerSource.value);
 
 // The chain, from client (front) to origin (back). NASA is the origin and is
-// always available — it can't be emptied.
+// always available, it can't be emptied.
 const chain = computed(() => [
   // `short` is only different for Vue Query (the longest label); on the smallest
   // screens the chain shows it so the row + timing fit on one line.
@@ -78,9 +78,9 @@ const chain = computed(() => [
   { key: "nasa", label: footer.value?.nasa, short: footer.value?.nasa, full: true, dot: "bg-white/70" },
 ]);
 
-// Layer 1 — Vue Query (client): INVALIDATE. Marks the client cache stale and
+// Layer 1, Vue Query (client): INVALIDATE. Marks the client cache stale and
 // refetches from the server chain, so you see which server layer answers + how
-// fast. (This is TanStack's natural operation — not a plain "empty".)
+// fast. (This is TanStack's natural operation, not a plain "empty".)
 const invalidateVueQuery = async () => {
   const active = queryClient
     .getQueryCache()
@@ -99,7 +99,7 @@ const invalidateVueQuery = async () => {
   }
 };
 
-// CLEAR Layer 2 — Nitro (server SWR front).
+// CLEAR Layer 2, Nitro (server SWR front).
 const clearNitro = async () => {
   try {
     const data = await useClearNitroCache();
@@ -114,7 +114,7 @@ const clearNitro = async () => {
   }
 };
 
-// CLEAR Layer 3 — Redis (server persistent backing store).
+// CLEAR Layer 3, Redis (server persistent backing store).
 const clearRedis = async () => {
   try {
     const data = await useClearRedisCache();
@@ -174,13 +174,13 @@ const clearRedis = async () => {
         </template>
       </ClientOnly>
 
-      <!-- Right: two labelled groups — Invalidate (client) and Delete (server
+      <!-- Right: two labelled groups, Invalidate (client) and Delete (server
            layers). Each group wraps as a unit, so on mobile they stack cleanly
            and stay labelled. -->
       <div
         class="flex w-full flex-nowrap items-center justify-between gap-3 sm:w-auto sm:justify-center sm:gap-4 lg:ml-auto"
       >
-        <!-- Invalidate group: Vue Query (client) — revalidate → refetch -->
+        <!-- Invalidate group: Vue Query (client), revalidate → refetch -->
         <div class="flex items-center gap-2">
           <span class="text-xs text-text-dim">{{ footer?.invalidateLabel }}</span>
           <UiTooltip>

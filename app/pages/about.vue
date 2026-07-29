@@ -9,7 +9,7 @@ const about = computed(() => content.value?.about);
 const seo = computed(() => content.value?.seo?.about);
 
 // SEO comes from the content (same source as the copy), not hardcoded here.
-// Twitter title/description are omitted on purpose — they fall back to the og:*
+// Twitter title/description are omitted on purpose, they fall back to the og:*
 // tags (set globally in app.vue), so duplicating them is deprecated noise.
 useSeoMeta({
     title: () => seo.value?.title,
@@ -100,8 +100,7 @@ const sourceLabel: Record<ContentSource, string> = {
             class="text-text-strong underline decoration-white/20 underline-offset-4 transition-colors hover:text-foreground hover:decoration-white/50"
         >
           {{ about.siblingLinkLabel }}
-        </a>
-        {{ about.siblingSuffix }}
+        </a>{{ about.siblingSuffix }}
       </p>
 
       <p class="mt-8 text-xs text-text-faint">

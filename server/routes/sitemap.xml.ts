@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
   const { siteUrl } = useRuntimeConfig().public;
 
   // Static routes come from the shared nav via the content API (the same cache
-  // chain the rest of the app rides), not a hardcoded list — add a page to the
+  // chain the rest of the app rides), not a hardcoded list, add a page to the
   // menu and it shows up here automatically.
   const { menu } = await $fetch<SiteContent>("/api/content");
   const staticPaths = Object.values(menu).map((item) => item.link);

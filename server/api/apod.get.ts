@@ -12,7 +12,7 @@ const NITRO_MAX_AGE = 30;
 const NITRO_STALE_MAX_AGE = 86400;
 
 // The concrete adapters injected into the pure use-cases. THE one place that
-// decides "Redis + NASA + probe" — swap here (or in a test) and nothing else changes.
+// decides "Redis + NASA + probe", swap here (or in a test) and nothing else changes.
 const deps: ApodDeps = {
   cache: redisCache,
   source: nasaApodSource,
