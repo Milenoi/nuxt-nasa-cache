@@ -44,7 +44,7 @@ export default defineNuxtConfig({
   },
 
   // Preload the two above-the-fold families (serif hero heading + sans body) so
-  // the font isn't discovered late in the critical chain — shaves the FOUT.
+  // the font isn't discovered late in the critical chain, shaves the FOUT.
   // Scoped to these families on purpose; preloading everything would over-fetch.
   fonts: {
     families: [
@@ -70,11 +70,11 @@ export default defineNuxtConfig({
 
   routeRules: {
     // Static pages: let the CDN cache and revalidate them in the background.
-    // APOD routes stay SSR so the Redis/NASA cache indicator is always live —
+    // APOD routes stay SSR so the Redis/NASA cache indicator is always live,
     // they send no cache-control at all, so Netlify forwards every request.
     // Caveat: `/` shows the cache pills as well and DOES carry the header, so on
     // a warm CDN hit those pills are as old as the cached copy (up to an hour).
-    // Acceptable for a demo — any in-app navigation or footer action refetches
+    // Acceptable for a demo, any in-app navigation or footer action refetches
     // through /api/apod, which is never cached.
     "/": {
       headers: {
@@ -87,6 +87,11 @@ export default defineNuxtConfig({
       },
     },
     "/how": {
+      headers: {
+        "cache-control": "public, s-maxage=3600, stale-while-revalidate=86400",
+      },
+    },
+    "/faq": {
       headers: {
         "cache-control": "public, s-maxage=3600, stale-while-revalidate=86400",
       },
@@ -131,7 +136,7 @@ export default defineNuxtConfig({
       },
       // Nitro's own cache layer (defineCachedFunction / SWR). Kept IN-MEMORY (in
       // the server process) on purpose: a warm hit never leaves the process, so
-      // it is genuinely faster than the Redis network round-trip — that's the
+      // it is genuinely faster than the Redis network round-trip, that's the
       // point of a front cache. The trade-off: it does not survive serverless
       // cold starts and is not shared between instances, so on a miss the request
       // simply falls through to the persistent, shared Redis layer below.

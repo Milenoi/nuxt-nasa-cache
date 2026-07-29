@@ -9,7 +9,12 @@ const menuOpen = ref(false);
 // Nav items come from the content's menu.
 const nav = computed(() =>
   content.value
-    ? [content.value.menu.apod, content.value.menu.how, content.value.menu.about]
+    ? [
+        content.value.menu.apod,
+        content.value.menu.how,
+        content.value.menu.faq,
+        content.value.menu.about,
+      ]
     : [],
 );
 

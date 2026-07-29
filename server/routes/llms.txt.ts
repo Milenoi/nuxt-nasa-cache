@@ -5,13 +5,14 @@ import type { SiteContent } from "#shared/types";
 
 export default defineEventHandler(async (event) => {
   const { siteUrl } = useRuntimeConfig().public;
-  const { header, hero, how, about, apod, menu } = await $fetch<SiteContent>("/api/content");
+  const { header, hero, how, faq, about, apod, menu } = await $fetch<SiteContent>("/api/content");
 
   // One-line descriptor per route, each pulled from that page's own content.
   const descriptions: Record<string, string> = {
     "/": hero.tagline,
     "/apod": apod.listPage.heading,
     "/how": how.heading,
+    "/faq": faq.heading,
     "/about": about.heading,
   };
 

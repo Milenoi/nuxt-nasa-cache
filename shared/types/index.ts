@@ -37,7 +37,7 @@ export interface ApodEntry {
      *  probing failed. */
     width: number | null;
     height: number | null;
-    /** Where this response came from — set fresh by the server on every request. */
+    /** Where this response came from, set fresh by the server on every request. */
     _source?: ApodSource;
 }
 
@@ -99,7 +99,7 @@ export interface SeoEntry {
 }
 
 /** Pages that have their own SEO entry in the content. */
-export type SeoPage = "home" | "apod" | "how" | "about";
+export type SeoPage = "home" | "apod" | "how" | "faq" | "about";
 
 export interface CommonContent {
     isFetchingFromLabel: string;
@@ -189,6 +189,22 @@ export interface HowContent {
     scopeBlueprint: string;
 }
 
+export interface FaqEntry {
+    q: string;
+    a: string;
+    /** Optional link to the upstream docs, rendered under the answer. */
+    href?: string;
+}
+
+export interface FaqContent {
+    tagline: string;
+    heading: string;
+    lead: string;
+    /** Shared label for the optional per-answer docs link. */
+    docsLabel: string;
+    items: FaqEntry[];
+}
+
 /**
  * The full site content payload returned by `/api/content`. Every section
  * consumers read is typed precisely, so pages and components can drop their
@@ -201,11 +217,18 @@ export interface SiteContent {
     hero: HeroContent;
     footer: FooterContent;
     /** Nav entries, keyed by page. */
-    menu: { home: MenuLink; apod: MenuLink; how: MenuLink; about: MenuLink };
+    menu: {
+        home: MenuLink;
+        apod: MenuLink;
+        how: MenuLink;
+        faq: MenuLink;
+        about: MenuLink;
+    };
     apod: ApodContent;
     how: HowContent;
+    faq: FaqContent;
     about: AboutContent;
-    /** Where this response came from — set fresh by the server on every request. */
+    /** Where this response came from, set fresh by the server on every request. */
     _source?: ContentSource;
 }
 

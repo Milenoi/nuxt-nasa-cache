@@ -1,19 +1,23 @@
 {
   "seo": {
     "home": {
-      "title": "Nuxt Cache — making a slow API feel instant",
+      "title": "Nuxt Cache · making a slow API feel instant",
       "description": "A Nuxt 4 demo that makes NASA's slow, rate-limited Astronomy Picture of the Day API feel instant with Redis and TanStack Vue Query caching."
     },
     "apod": {
-      "title": "Recent captures — Nuxt Cache",
-      "description": "Browse the last 60 days of NASA's Astronomy Picture of the Day — images and videos, served instantly from Redis and TanStack Vue Query."
+      "title": "Recent captures · Nuxt Cache",
+      "description": "Browse the last 60 days of NASA's Astronomy Picture of the Day: images and videos, served instantly from Redis and TanStack Vue Query."
     },
     "how": {
-      "title": "How it works — Nuxt Cache",
-      "description": "The cache chain behind Nuxt Cache: Vue Query (client) → Nitro (SWR) → Redis → NASA's APOD API — each layer asks the next only when it is empty."
+      "title": "How it works · Nuxt Cache",
+      "description": "The cache chain behind Nuxt Cache: Vue Query (client) → Nitro (SWR) → Redis → NASA's APOD API, where each layer asks the next only when it is empty."
+    },
+    "faq": {
+      "title": "FAQ · Nuxt Cache",
+      "description": "Answers about the cache chain behind Nuxt Cache: what each layer stores, why the HTML is not cached, and what happens when you clear everything."
     },
     "about": {
-      "title": "About — Nuxt Cache",
+      "title": "About · Nuxt Cache",
       "description": "A small Nuxt 4 side project about multi-layer caching over NASA's Astronomy Picture of the Day API."
     }
   },
@@ -51,12 +55,12 @@
     "nitro": "Nitro",
     "redis": "Redis",
     "nasa": "NASA",
-    "vueQueryTitle": "Invalidate Layer 1 — revalidate the TanStack Vue Query client cache (refetch from the server chain)",
-    "nitroTitle": "Clear Layer 2 — the Nitro SWR cache (server, nitro: namespace)",
-    "redisTitle": "Clear Layer 3 — the Redis cache (server, apod: namespace)",
+    "vueQueryTitle": "Invalidate Layer 1: revalidate the TanStack Vue Query client cache (refetch from the server chain)",
+    "nitroTitle": "Clear Layer 2: the Nitro SWR cache (server, nitro: namespace)",
+    "redisTitle": "Clear Layer 3: the Redis cache (server, apod: namespace)",
     "statusReady": "Cache warm",
-    "toastRevalidated": "Revalidated — served from {source}{timing}.",
-    "toastNothingToRefetch": "Nothing to revalidate here — open the gallery or a picture.",
+    "toastRevalidated": "Revalidated: served from {source}{timing}.",
+    "toastNothingToRefetch": "Nothing to revalidate here. Open the gallery or a picture.",
     "toastClearFail": "Something went wrong. The cache was not cleared."
   },
   "menu": {
@@ -72,6 +76,10 @@
       "label": "How it works",
       "link": "/how"
     },
+    "faq": {
+      "label": "FAQ",
+      "link": "/faq"
+    },
     "about": {
       "label": "About",
       "link": "/about"
@@ -80,9 +88,9 @@
   "how": {
     "tagline": "Nuxt Cache",
     "heading": "How it works",
-    "leadBefore": "A slow, rate-limited API — made to feel instant. A chain of caches sits between you and NASA. Each layer only asks the next when it is ",
+    "leadBefore": "A slow, rate-limited API, made to feel instant. A chain of caches sits between you and NASA. Each layer only asks the next when it is ",
     "leadHighlight": "empty",
-    "leadAfter": ", and fills itself on the way back — so a request stops at the first warm layer.",
+    "leadAfter": ", and fills itself on the way back, so a request stops at the first warm layer.",
     "docsLabel": "Docs ↗",
   "codeShow": "Show code",
   "codeHide": "Hide code",
@@ -96,47 +104,104 @@
       {
         "name": "Nitro",
         "role": "server cache · SWR",
-        "desc": "An in-process, in-memory stale-while-revalidate cache in front of Redis. A warm hit never leaves the server process, so it beats the Redis network hop; while fresh (30s) it answers directly, and once stale it serves the old value instantly AND refreshes in the background — no request waits for a refresh. It doesn't survive serverless cold starts; then the request simply falls through to Redis.",
+        "desc": "An in-process, in-memory stale-while-revalidate cache in front of Redis. A warm hit never leaves the server process, so it beats the Redis network hop; while fresh (30s) it answers directly, and once stale it serves the old value instantly AND refreshes in the background, so no request waits for a refresh. It doesn't survive serverless cold starts; then the request simply falls through to Redis.",
         "href": "https://nitro.build/guide/cache"
       },
       {
         "name": "Redis",
         "role": "server cache",
-        "desc": "The persistent store, shared by every visitor and kept for 24 hours. A plain cache-aside store with no revalidation of its own: when an entry is gone, the next request blocks and refetches — exactly the wait that Nitro's SWR avoids. Nitro falls through to Redis on a miss.",
+        "desc": "The persistent store, shared by every visitor and kept for 24 hours. A plain cache-aside store with no revalidation of its own: when an entry is gone, the next request blocks and refetches, which is exactly the wait that Nitro's SWR avoids. Nitro falls through to Redis on a miss.",
         "href": "https://redis.io/docs/latest/"
       },
       {
         "name": "NASA APOD API",
         "role": "origin",
-        "desc": "The single source of truth. Rate-limited and slow — the better part of a second per request — which is exactly why the caches exist.",
+        "desc": "The single source of truth. Rate-limited and slow (the better part of a second per request), which is exactly why the caches exist.",
         "href": "https://github.com/nasa/apod-api"
       }
     ],
     "guideHeading": "Try it yourself",
-    "guideLead": "The controls in the footer work on every page — here is what to watch.",
+    "guideLead": "The controls in the footer work on every page. Here is what to watch.",
     "guide": [
       {
         "title": "Read the chain",
-        "desc": "The footer shows the chain with a dot per layer — filled means that cache holds data. The badge on each card and the hero shows which layer is the current active source."
+        "desc": "The footer shows the chain with a dot per layer; filled means that cache holds data. The badge on each card and the hero shows which layer is the current active source."
       },
       {
         "title": "Invalidate Vue Query",
-        "desc": "Revalidates the browser cache and refetches from the server chain — Nitro if warm, else Redis, else NASA. The footer reports the source and how long it took."
+        "desc": "Revalidates the browser cache and refetches from the server chain: Nitro if warm, else Redis, else NASA. The footer reports the source and how long it took."
       },
       {
         "title": "Delete Nitro or Redis",
-        "desc": "Empties a server layer. The badge flips instantly to the next layer down. Delete both and the next request goes all the way to NASA — a genuine, rate-limited cold start."
+        "desc": "Empties a server layer. The badge flips instantly to the next layer down. Delete both and the next request goes all the way to NASA: a genuine, rate-limited cold start."
       }
     ],
     "scopeHeading": "What this is not",
-    "scopeData": "Every layer here caches data on its way from NASA to the page. The rendered HTML is a separate question, answered per route: the three static pages let the CDN serve them for an hour, while the APOD routes allow nothing and are rendered per request — a cached page could not honestly report which cache answered, because its labels would be as old as the copy. Route rules, prerendering and ISR are real and useful layers, just not the ones this project is about.",
+    "scopeData": "Every layer here caches data on its way from NASA to the page. The rendered HTML is a separate question, answered per route: the three static pages let the CDN serve them for an hour, while the APOD routes allow nothing and are rendered per request. A cached page could not honestly report which cache answered, because its labels would be as old as the copy. Route rules, prerendering and ISR are real and useful layers, just not the ones this project is about.",
     "scopeBlueprint": "The chain is also more elaborate than most projects need. A Nitro SWR cache in front of Redis earns its place here because you can watch a request stop at it and see what that saves; in production you would usually pick one server cache and move on. Read this as an X-ray of the layers, not as a blueprint to copy."
+  },
+  "faq": {
+    "tagline": "FAQ",
+    "heading": "Questions about the cache",
+    "lead": "The short answers. The timeline on \"How it works\" has the long ones.",
+    "docsLabel": "Docs ↗",
+    "items": [
+      {
+        "q": "What was the motivation to build something like this?",
+        "a": "A few years ago the idea of a server-side Redis cache came up in a Nuxt project I was working on. As an old-school frontend developer that layer had never been my problem, so I wanted to take one apart properly: what belongs in which cache, and what each layer actually buys you."
+      },
+      {
+        "q": "Why cache a public API at all?",
+        "a": "NASA's APOD API is slow and rate-limited, and the gallery asks for 60 days at once. Cached, that becomes one request per day, served instantly to everyone after the first visitor."
+      },
+      {
+        "q": "What does each layer actually store?",
+        "a": "All three store the same normalized APOD JSON: Vue Query in the browser and in localStorage, Nitro in the server process, Redis shared and persistent for 24 hours. The images are not in the chain. They ride the browser's HTTP cache and Netlify's Image CDN."
+      },
+      {
+        "q": "What is Vue Query, and what does it do here?",
+        "a": "TanStack Vue Query is a data cache in the browser: one entry per query key, shared by every component that asks for it. Here it holds the APOD JSON under [\"apod\"] for the list and [\"apod\", date] for a single day, fresh for 24 hours, with no refetch on mount or window focus. The server passes its cache to the client in the page payload, so hydration costs no second request, and each entry is written to localStorage for repeat visits. It is the layer the footer's invalidate button acts on."
+      },
+      {
+        "q": "Is Vue Query actually needed here?",
+        "a": "Yes, for the part that matters here. Nuxt's useAsyncData also carries server-fetched data into the client without a second request, but on an internal navigation it would fetch again: its default cache only reads the payload while hydrating, and Nuxt purges that data on navigation by design. Vue Query keeps one entry per key with a 24 hour stale time instead, so moving between the gallery, a picture and back costs no request at all. It also adds localStorage persistence and the invalidate API the footer button uses."
+      },
+      {
+        "q": "Why a Nitro cache and Redis? Isn't one enough?",
+        "a": "For most projects one is enough. They are both here because they fail differently: a Nitro hit never leaves the server process and beats the Redis network hop, but it dies with the process and is not shared between instances. Redis survives both. Clear one in the footer and the request falls through to the other."
+      },
+      {
+        "q": "What is the difference between defineCachedFunction and defineCachedEventHandler?",
+        "a": "Both come from Nitro rather than from Nuxt itself, and both have been available since Nuxt 3 (this project runs Nitro 2.13). They share the same options: maxAge, staleMaxAge, swr and getKey. defineCachedEventHandler caches a whole HTTP response for a route, keyed by the request, so on a hit the handler does not run at all. defineCachedFunction caches the return value of a single function, keyed by its arguments, and the handler around it still runs on every request.",
+        "href": "https://nitro.build/guide/cache"
+      },
+      {
+        "q": "Why does the Nitro layer cache a function here and not the route?",
+        "a": "Because the response carries a flag saying which layer answered it, and that flag has to stay true. A cached event handler would serve the entire stored response, flag included, so the badge would claim Nitro forever and clearing Redis would change nothing on screen. Caching only the inner function keeps the handler running, so it can re-label every response. The event handler would work and would skip slightly more work per request, it just cannot report on itself, which is the same reason the HTML is not cached."
+      },
+      {
+        "q": "Why isn't the rendered HTML cached too?",
+        "a": "The badges are written at render time, so a cached page would report a cache state as old as the copy. Route rules, prerendering and ISR are perfectly good tools; they just cache something else than this demo is about."
+      },
+      {
+        "q": "Why is the first load of a picture slow and the second instant?",
+        "a": "Images are not part of the JSON chain. On first view Netlify's Image CDN fetches the NASA original and converts it to AVIF at the requested width; that conversion is the wait. Afterwards the variant is cached at the edge and in your browser."
+      },
+      {
+        "q": "How long does anything stay cached?",
+        "a": "Redis 24 hours, for the list and for every single day. Nitro counts a value as fresh for 30 seconds and may then serve it stale for up to a day while it revalidates. Vue Query 24 hours in the browser. The daily miss is not a TTL: the list key contains its date range (last 60 days, ending yesterday), so at midnight it becomes a different key."
+      },
+      {
+        "q": "Would you build a production app exactly like this?",
+        "a": "No: one server cache instead of two, and the HTML cached as well. The extra layers exist here to make the trade-offs visible and clickable."
+      }
+    ]
   },
   "about": {
     "tagline": "About",
     "heading": "Making a slow API feel instant",
     "lead1": "A small side project about caching. The idea is simple: take NASA's Astronomy Picture of the Day, a lovely but slow and rate-limited API, and see how instant it can feel with a couple of caches in front of it.",
-    "lead2": "The browser never calls NASA directly. Requests flow through a chain of caches — Vue Query in the browser, a Nitro stale-while-revalidate cache and Redis on the server — each asking the next only when it is empty, and filling itself on the way back. Clear or invalidate any layer from the footer and watch where the next request really goes.",
+    "lead2": "The browser never calls NASA directly. Requests flow through a chain of caches (Vue Query in the browser, a Nitro stale-while-revalidate cache and Redis on the server), each asking the next only when it is empty, and filling itself on the way back. Clear or invalidate any layer from the footer and watch where the next request really goes.",
     "techStackLabel": "Tech stack",
     "techStack": [
       { "label": "Framework", "value": "Nuxt 4 · Vue 3.5 (SSR)" },
@@ -148,14 +213,14 @@
       { "label": "Hosting", "value": "Netlify (SSR)" }
     ],
     "cta": "View the source on GitHub ↗",
-    "creditText": "Built by Melanie Stief — who has always dreamed of flying to space, or at least working at NASA (which, sadly, will probably never happen in this lifetime).",
+    "creditText": "Built by Melanie Stief, who has always dreamed of flying to space, or at least working at NASA (which, sadly, will probably never happen in this lifetime).",
     "creditSep": "·",
     "creditLinkLabel": "viridis.de",
     "creditUrl": "https://viridis.de",
     "siblingText": "A sibling to the",
     "siblingLinkLabel": "RAG demo ↗",
     "siblingUrl": "https://nuxt-rag.netlify.app/",
-    "siblingSuffix": "— the same editorial style, applied to retrieval-augmented generation."
+    "siblingSuffix": ", the same editorial style, applied to retrieval-augmented generation."
   },
   "apod": {
     "all": {

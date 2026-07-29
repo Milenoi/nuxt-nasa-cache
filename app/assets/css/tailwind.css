@@ -4,12 +4,12 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
-  Nuxt Cache redesign — dark-only, shadcn-style editorial theme.
+  Nuxt Cache redesign, dark-only, shadcn-style editorial theme.
   Tokens mirror design_handoff_nuxt_cache/README.md exactly.
 */
 
 :root {
-  /* shadcn semantic tokens (dark values — app is dark-only) */
+  /* shadcn semantic tokens (dark values, app is dark-only) */
   --background: #050506;
   --foreground: #fafafa;
   --card: #0b0b0d;
@@ -217,6 +217,16 @@
   from { height: var(--reka-collapsible-content-height); }
   to { height: 0; }
 }
+/* Same idea as collapsible, but reka exposes the measured height under its own
+   accordion variable, so the keyframes cannot be shared. */
+@keyframes accordion-down {
+  from { height: 0; }
+  to { height: var(--reka-accordion-content-height); }
+}
+@keyframes accordion-up {
+  from { height: var(--reka-accordion-content-height); }
+  to { height: 0; }
+}
 
 @layer base {
   * {
@@ -235,7 +245,7 @@
   }
 }
 
-/* Toasts (vue-sonner): frosted-glass, tinted per type, borderless — styling the
+/* Toasts (vue-sonner): frosted-glass, tinted per type, borderless, styling the
    library's generated DOM, so a global selector is required. */
 .toaster {
   --success-bg: rgba(16, 66, 48, 0.62);
