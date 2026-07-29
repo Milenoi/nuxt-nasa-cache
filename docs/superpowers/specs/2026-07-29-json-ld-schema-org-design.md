@@ -130,7 +130,7 @@ Moduls): `defineWebSite`, `defineWebPage`, `defineImage` (**nicht**
 | `app/app.vue` | `defineWebSite` (Name und Beschreibung aus `site`) |
 | `/` | `defineWebPage` + `primaryImageOfPage` aus dem aktuellen APOD-Eintrag |
 | `/apod` | `defineWebPage({ "@type": "CollectionPage" })` + `defineItemList` aller Einträge + Breadcrumb |
-| `/apod/:date` | `defineWebPage` + `defineImage` oder `defineVideo` je `mediaType` + Breadcrumb |
+| `/apod/:date` | `defineWebPage` mit `primaryImageOfPage` (Bild) oder `video` (Video) + Breadcrumb |
 | `/how` | `defineArticle({ "@type": "TechArticle" })`, `author` per `@id` auf den Person-Knoten, ohne `datePublished` + Breadcrumb |
 | `/faq` | `defineWebPage({ "@type": "FAQPage" })` + `defineQuestion` je Item, alter `useHead`-Block entfällt |
 | `/about` | `defineWebPage({ "@type": "AboutPage" })` + Breadcrumb |
@@ -151,6 +151,28 @@ beim SSR warm, weil der Vue-Query-Plugin ihn awaited prefetcht.
 - Manuell: `yarn dev`, pro Route den SSR-Output per `curl` auf
   `<script type="application/ld+json">` prüfen (nicht im Browser, damit wirklich
   der Server-Output geprüft wird), danach einmal durch den Rich Results Test.
+
+## Abweichungen bei der Umsetzung
+
+Drei Dinge stellten sich beim Verifizieren am SSR-Output anders dar als im
+Entwurf gedacht:
+
+1. **Medien hängen an der Seite, nicht daneben.** `defineImage` / `defineVideo`
+   als eigene Aufrufe erzeugen Knoten, die im Graph mit nichts verbunden sind.
+   Sie stehen jetzt als `primaryImageOfPage` bzw. `video` in `defineWebPage`, das
+   Modul zieht sie beim Auflösen selbst als typisierte Unterknoten heraus.
+2. **`name` und `description` müssen explizit gesetzt werden.** Ohne sie erbt
+   jede `WebPage` die Site-Beschreibung, obwohl der Meta-Tag der Seite etwas
+   anderes sagt: im ersten Durchlauf beschrieben sich alle sechs Seiten im Graph
+   identisch.
+3. **Verschachtelte Medien brauchen ein eigenes `"@type"`.** Das Modul ergänzt es
+   nur bei Properties, die es als Bild kennt; der `video`-Knoten kam ohne Typ
+   heraus. Beide Builder setzen `"@type"` deshalb selbst.
+
+Außerdem akzeptieren die Definer-Typen keine Refs auf Property-Ebene, nur auf dem
+gesamten Objekt. Breadcrumb- und ItemList-Arrays werden daher einmal beim Setup
+berechnet, was ausreicht: der Content ist da (awaited Prefetch), und jeder
+Routenwechsel führt das Setup erneut aus.
 
 ## Nicht Teil dieser Arbeit
 
