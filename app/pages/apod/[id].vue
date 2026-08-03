@@ -35,11 +35,16 @@ const socialDescription = computed(() =>
 
 const { ogImage, ogImageAlt } = useApodOgImage(item);
 
+// NASA titles carry straight apostrophes too, and og:title is an attribute value
+// like the descriptions are.
+const metaTitle = computed(() =>
+  getMetaText(item.value?.title ?? "Astronomy Picture of the Day"),
+);
+
 useSeoMeta({
-  title: () =>
-    `${item.value?.title ?? "Astronomy Picture of the Day"} - Nuxt Cache`,
+  title: () => `${metaTitle.value} - Nuxt Cache`,
   description: () => seoDescription.value,
-  ogTitle: () => item.value?.title ?? "Astronomy Picture of the Day",
+  ogTitle: () => metaTitle.value,
   ogDescription: () => socialDescription.value,
   ogImage: () => ogImage.value,
   ogImageAlt: () => ogImageAlt.value,

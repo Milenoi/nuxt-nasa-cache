@@ -1,11 +1,30 @@
 import { describe, expect, it } from "vitest";
 import {
+  getMetaText,
   getSeoDescription,
   SEO_DESCRIPTION_MAX,
   SOCIAL_DESCRIPTION_MAX,
 } from "../app/utils/getSeoDescription";
 
+describe("getMetaText", () => {
+  it("replaces straight apostrophes, which break attribute parsers", () => {
+    expect(getMetaText("What's happening to NASA's cloud?")).toBe(
+      "What’s happening to NASA’s cloud?",
+    );
+  });
+
+  it("leaves a typographic apostrophe alone", () => {
+    expect(getMetaText("What’s happening")).toBe("What’s happening");
+  });
+});
+
 describe("getSeoDescription", () => {
+  it("normalises apostrophes while shortening", () => {
+    expect(getSeoDescription("What's happening to this cloud?", 12)).toBe(
+      "What’s…",
+    );
+  });
+
   it("leaves text that already fits untouched", () => {
     expect(getSeoDescription("Short enough.", 40)).toBe("Short enough.");
   });

@@ -2,17 +2,17 @@
   "seo": {
     "home": {
       "title": "Nuxt Cache · making a slow API feel instant",
-      "description": "A Nuxt 4 demo that makes NASA's slow, rate-limited Astronomy Picture of the Day API feel instant with Redis and TanStack Vue Query caching.",
-      "social": "How Redis and TanStack Vue Query make NASA's slow Astronomy Picture of the Day API feel instant."
+      "description": "A Nuxt 4 demo that makes NASA’s slow, rate-limited Astronomy Picture of the Day API feel instant with Redis and TanStack Vue Query caching.",
+      "social": "How Redis and TanStack Vue Query make NASA’s slow Astronomy Picture of the Day API feel instant."
     },
     "apod": {
       "title": "Recent captures · Nuxt Cache",
-      "description": "Browse the last 60 days of NASA's Astronomy Picture of the Day: images and videos, served instantly from Redis and TanStack Vue Query.",
-      "social": "The last 60 days of NASA's Astronomy Picture of the Day, images and videos, served straight from cache."
+      "description": "Browse the last 60 days of NASA’s Astronomy Picture of the Day: images and videos, served instantly from Redis and TanStack Vue Query.",
+      "social": "The last 60 days of NASA’s Astronomy Picture of the Day, images and videos, served straight from cache."
     },
     "how": {
       "title": "How it works · Nuxt Cache",
-      "description": "The cache chain behind Nuxt Cache: Vue Query (client) → Nitro (SWR) → Redis → NASA's APOD API, where each layer asks the next only when it is empty.",
+      "description": "The cache chain behind Nuxt Cache: Vue Query (client) → Nitro (SWR) → Redis → NASA’s APOD API, where each layer asks the next only when it is empty.",
       "social": "Vue Query, Nitro, Redis, NASA. Every cache layer asks the next one only when it has nothing to give."
     },
     "faq": {
@@ -22,8 +22,8 @@
     },
     "about": {
       "title": "About · Nuxt Cache",
-      "description": "A small Nuxt 4 side project about multi-layer caching over NASA's Astronomy Picture of the Day API, built with Redis, TanStack Vue Query and shadcn-vue.",
-      "social": "A small Nuxt 4 side project about multi-layer caching over NASA's Astronomy Picture of the Day API."
+      "description": "A small Nuxt 4 side project about multi-layer caching over NASA’s Astronomy Picture of the Day API, built with Redis, TanStack Vue Query and shadcn-vue.",
+      "social": "A small Nuxt 4 side project about multi-layer caching over NASA’s Astronomy Picture of the Day API."
     }
   },
   "common": {

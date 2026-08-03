@@ -4,11 +4,20 @@ export const SEO_DESCRIPTION_MAX = 155;
 export const SOCIAL_DESCRIPTION_MAX = 120;
 
 /**
+ * Normalise NASA copy for a meta tag: one line, typographic apostrophe.
+ */
+export function getMetaText(text: string): string {
+  // The apostrophe is not cosmetics. A straight one inside content="..." breaks
+  // parsers that treat ' as a quote: opengraph.xyz reads "NASA's ..." as 29
+  // characters and stops there. The typographic form is correct English anyway.
+  return text.replace(/\s+/g, " ").trim().replaceAll("'", "’");
+}
+
+/**
  * Shorten free-form text (an APOD explanation) to `max`, on a word boundary.
  */
 export function getSeoDescription(text: string, max: number): string {
-  // NASA's explanations carry hard line breaks; a meta tag wants one line.
-  const clean = text.replace(/\s+/g, " ").trim();
+  const clean = getMetaText(text);
   if (clean.length <= max) return clean;
 
   // The ellipsis has to fit inside `max`, so search one character short of it.

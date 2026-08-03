@@ -48,9 +48,10 @@ export function useApodOgImage(
 
   // Tied to `source`, not to the entry: on a fallback the card shows the nebula,
   // so an entry title there would describe an image nobody is looking at.
-  const ogImageAlt = computed(() =>
-    source.value ? (toValue(entry)?.title ?? socialImageAlt) : socialImageAlt,
-  );
+  const ogImageAlt = computed(() => {
+    const title = toValue(entry)?.title;
+    return source.value && title ? getMetaText(title) : socialImageAlt;
+  });
 
   return { ogImage, ogImageAlt };
 }
