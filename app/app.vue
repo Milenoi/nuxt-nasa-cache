@@ -1,6 +1,12 @@
 <script setup lang="ts">
-const { siteName, siteDescription, siteUrl, language } =
-  useRuntimeConfig().public;
+const {
+  siteName,
+  siteDescription,
+  socialDescription,
+  socialImageAlt,
+  siteUrl,
+  language,
+} = useRuntimeConfig().public;
 const ogImage = `${siteUrl}/og-image.jpg`;
 
 // Canonical / og:url track the current route so every page points at itself
@@ -9,16 +15,22 @@ const route = useRoute();
 const canonical = computed(() => `${siteUrl}${route.path}`);
 
 // Global SEO + social share defaults (pages override title/description/og/twitter).
+// description and ogDescription are deliberately different strings, not one reused
+// text: the SERP snippet has ~160 characters, a mobile share card cuts at ~125.
 useSeoMeta({
   description: siteDescription,
   ogSiteName: siteName,
   ogType: "website",
   ogTitle: siteName,
-  ogDescription: siteDescription,
+  ogDescription: socialDescription,
   ogUrl: () => canonical.value,
+  // The pages that carry an APOD entry override this with the entry's own image,
+  // normalised to the same box, so these dimensions stay true everywhere.
   ogImage,
-  ogImageWidth: 1200,
-  ogImageHeight: 630,
+  ogImageWidth: OG_IMAGE_WIDTH,
+  ogImageHeight: OG_IMAGE_HEIGHT,
+  ogImageAlt: socialImageAlt,
+  ogImageType: "image/jpeg",
   // twitter:title/description are omitted, X falls back to the og:* tags, so
   // duplicating them is deprecated noise. Card type + image are still explicit.
   twitterCard: "summary_large_image",

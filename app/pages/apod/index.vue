@@ -12,11 +12,18 @@ const { data, serverSource, isPending } = await useFetchApod<ApodList>();
 
 const { siteUrl } = useRuntimeConfig().public;
 
+// The newest entry stands in for the gallery, so the share card ages with the
+// list instead of showing a graphic that has nothing to do with it.
+const { ogImage, ogImageAlt } = useApodOgImage(() => data.value?.entries?.[0]);
+
+// `social` is the shorter og:description, see the SeoEntry type.
 useSeoMeta({
   title: () => seo.value?.title,
   description: () => seo.value?.description,
   ogTitle: () => seo.value?.title,
-  ogDescription: () => seo.value?.description,
+  ogDescription: () => seo.value?.social,
+  ogImage: () => ogImage.value,
+  ogImageAlt: () => ogImageAlt.value,
 });
 
 // Structured data: this page is a collection of the last 60 entries.

@@ -24,18 +24,25 @@ if (!/^\d{4}-\d{2}-\d{2}$/.test(id)) {
 // Fetch a single APOD entry by date.
 const { data: item, serverSource } = await useFetchApod<ApodEntry>(id);
 
-const seoDescription = computed(() => {
-  const text = item.value?.explanation ?? "";
-  return text.length > 200 ? `${text.slice(0, 197).trimEnd()}…` : text;
-});
+// Two cuts of the same explanation: the SERP snippet has room for ~160
+// characters, a share card on mobile cuts at ~125.
+const seoDescription = computed(() =>
+  getSeoDescription(item.value?.explanation ?? "", SEO_DESCRIPTION_MAX),
+);
+const socialDescription = computed(() =>
+  getSeoDescription(item.value?.explanation ?? "", SOCIAL_DESCRIPTION_MAX),
+);
+
+const { ogImage, ogImageAlt } = useApodOgImage(item);
 
 useSeoMeta({
   title: () =>
     `${item.value?.title ?? "Astronomy Picture of the Day"} - Nuxt Cache`,
   description: () => seoDescription.value,
   ogTitle: () => item.value?.title ?? "Astronomy Picture of the Day",
-  ogDescription: () => seoDescription.value,
-  ogImage: () => item.value?.thumbnailUrl || item.value?.url,
+  ogDescription: () => socialDescription.value,
+  ogImage: () => ogImage.value,
+  ogImageAlt: () => ogImageAlt.value,
   // twitter:* inherit from og:* (X's documented fallback), so we don't repeat them.
 });
 

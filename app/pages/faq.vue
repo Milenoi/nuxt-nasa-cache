@@ -5,11 +5,12 @@ const faq = computed(() => content.value?.faq);
 const seo = computed(() => content.value?.seo?.faq);
 
 // SEO from the content (twitter:* fall back to og:* set globally in app.vue).
+// `social` is the shorter og:description, see the SeoEntry type.
 useSeoMeta({
     title: () => seo.value?.title,
     description: () => seo.value?.description,
     ogTitle: () => seo.value?.title,
-    ogDescription: () => seo.value?.description,
+    ogDescription: () => seo.value?.social,
 });
 
 // FAQPage structured data, built from the same items the page renders, so the

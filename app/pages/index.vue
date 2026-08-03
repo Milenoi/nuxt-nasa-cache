@@ -7,26 +7,30 @@ const {content} = useSiteContent();
 const hero = computed(() => content.value?.hero);
 const seo = computed(() => content.value?.seo?.home);
 
-// SEO from the content (twitter:* fall back to og:* set globally in app.vue).
-useSeoMeta({
-    title: () => seo.value?.title,
-    description: () => seo.value?.description,
-    ogTitle: () => seo.value?.title,
-    ogDescription: () => seo.value?.description,
-});
-
 // Pull the latest APOD so the hero itself is delivered through Redis + TanStack.
 const {data, serverSource, fromClientCache} = await useFetchApod<ApodList>();
 
 // Newest APOD, any media type, the hero reflects today's actual entry.
 const latestApod = computed(() => data.value?.entries?.[0] ?? null);
 
-// Structured data. Name and description are set explicitly: the module falls
-// back to the site-wide description otherwise, which would make every page in
-// the graph describe itself identically.
-// Today's APOD rides along as the page's primary image, but only for image
-// entries: a video `url` is a player, not an image. `latestApod` is already
-// resolved here because useFetchApod awaits suspense.
+// The share card shows what the hero shows: today's entry, not a fixed graphic.
+const {ogImage, ogImageAlt} = useApodOgImage(latestApod);
+
+// SEO from the content (twitter:* fall back to og:* set globally in app.vue).
+// `social` is the shorter og:description, see the SeoEntry type.
+useSeoMeta({
+    title: () => seo.value?.title,
+    description: () => seo.value?.description,
+    ogTitle: () => seo.value?.title,
+    ogDescription: () => seo.value?.social,
+    ogImage: () => ogImage.value,
+    ogImageAlt: () => ogImageAlt.value,
+});
+
+// Name and description are explicit: without them the module falls back to the
+// site description and every page in the graph would describe itself the same.
+// Today's APOD rides along as primary image, images only, a video `url` is a
+// player. `latestApod` is resolved already, useFetchApod awaits suspense.
 useSchemaOrg([
     defineWebPage({
         name: () => seo.value?.title,

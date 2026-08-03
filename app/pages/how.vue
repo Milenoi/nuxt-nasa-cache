@@ -13,11 +13,12 @@ const how = computed(() => content.value?.how);
 const seo = computed(() => content.value?.seo?.how);
 
 // SEO from the content (twitter:* fall back to og:* set globally in app.vue).
+// `social` is the shorter og:description, see the SeoEntry type.
 useSeoMeta({
     title: () => seo.value?.title,
     description: () => seo.value?.description,
     ogTitle: () => seo.value?.title,
-    ogDescription: () => seo.value?.description,
+    ogDescription: () => seo.value?.social,
 });
 
 // Structured data: this page explains the caching chain, so it is a TechArticle.

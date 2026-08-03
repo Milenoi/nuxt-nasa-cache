@@ -95,7 +95,11 @@ export interface MenuLink {
 /** Per-page SEO copy, kept in the content so pages don't hardcode meta tags. */
 export interface SeoEntry {
     title: string;
+    /** The SERP snippet, written for 120 to 160 characters. */
     description: string;
+    /** og:description. Shorter than `description` on purpose, a share card cuts
+     *  around 125 characters on mobile. */
+    social: string;
 }
 
 /** Pages that have their own SEO entry in the content. */

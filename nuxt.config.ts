@@ -9,8 +9,20 @@ import imageConfig from "./app/utils/getImageConfig";
 const site = {
   url: "https://nuxt-cache-project.netlify.app",
   name: "Nuxt Cache Project",
+  // Written for the SERP window (120 to 160 characters), which is also what the
+  // schema.org WebSite node carries.
   description:
-    "A Nuxt 4 demo of multi-layer caching (Redis + TanStack Query) over the NASA APOD API.",
+    "A Nuxt 4 demo of multi-layer caching over the NASA Astronomy Picture of the Day API: validated on the server, cached in Redis, cached again in the browser.",
+};
+
+// Share-card defaults for the pages that have no APOD entry of their own. The
+// description is a separate, shorter string because a mobile preview cuts around
+// 125 characters, well before the SERP does.
+const social = {
+  description:
+    "A Nuxt 4 demo of multi-layer caching over the NASA APOD API, with Redis on the server and TanStack Query in the browser.",
+  imageAlt:
+    "A planetary nebula glowing pink, blue and red against a dense field of stars.",
 };
 
 export default defineNuxtConfig({
@@ -21,6 +33,8 @@ export default defineNuxtConfig({
     public: {
       siteName: site.name,
       siteDescription: site.description,
+      socialDescription: social.description,
+      socialImageAlt: social.imageAlt,
       siteUrl: site.url,
       language: "en-US",
     },
@@ -99,13 +113,10 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
-    // Static pages: let the CDN cache and revalidate them in the background.
-    // APOD routes stay SSR so the Redis/NASA cache indicator is always live,
-    // they send no cache-control at all, so Netlify forwards every request.
-    // Caveat: `/` shows the cache pills as well and DOES carry the header, so on
-    // a warm CDN hit those pills are as old as the cached copy (up to an hour).
-    // Acceptable for a demo, any in-app navigation or footer action refetches
-    // through /api/apod, which is never cached.
+    // APOD routes send no cache-control at all, their Redis/NASA indicator has
+    // to stay live. Caveat: `/` shows those pills too and DOES carry the header,
+    // so on a warm CDN hit they are as old as the cached copy (up to an hour).
+    // Fine for a demo, in-app navigation refetches through the never-cached API.
     "/": {
       headers: {
         "cache-control": "public, s-maxage=3600, stale-while-revalidate=86400",
@@ -164,12 +175,10 @@ export default defineNuxtConfig({
         password: process.env.NUXT_REDIS_PASSWORD,
         ttl: 86400, // Defaults to 0
       },
-      // Nitro's own cache layer (defineCachedFunction / SWR). Kept IN-MEMORY (in
-      // the server process) on purpose: a warm hit never leaves the process, so
-      // it is genuinely faster than the Redis network round-trip, that's the
-      // point of a front cache. The trade-off: it does not survive serverless
-      // cold starts and is not shared between instances, so on a miss the request
-      // simply falls through to the persistent, shared Redis layer below.
+      // Kept IN-MEMORY on purpose: a warm hit never leaves the server process,
+      // which is the whole point of a front cache, it beats the Redis round-trip.
+      // Trade-off: it dies with a serverless cold start and is not shared between
+      // instances, so a miss falls through to the shared Redis layer below.
       cache: {
         driver: "memory",
       },

@@ -11,11 +11,12 @@ const seo = computed(() => content.value?.seo?.about);
 // SEO comes from the content (same source as the copy), not hardcoded here.
 // Twitter title/description are omitted on purpose, they fall back to the og:*
 // tags (set globally in app.vue), so duplicating them is deprecated noise.
+// `social` is the shorter og:description, see the SeoEntry type.
 useSeoMeta({
     title: () => seo.value?.title,
     description: () => seo.value?.description,
     ogTitle: () => seo.value?.title,
-    ogDescription: () => seo.value?.description,
+    ogDescription: () => seo.value?.social,
 });
 
 // Structured data: an AboutPage, plus the breadcrumb trail.
