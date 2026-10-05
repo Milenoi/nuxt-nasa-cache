@@ -14,8 +14,8 @@ function makeEntry(overrides: Partial<ApodEntry> = {}): ApodEntry {
     title: "A Spiral Galaxy",
     explanation: "A very distant spiral galaxy.",
     mediaType: "image",
-    url: "https://apod.nasa.gov/apod/image/2607/galaxy1024.jpg",
-    hdurl: "https://apod.nasa.gov/apod/image/2607/galaxy4096.jpg",
+    url: "https://assets.science.nasa.gov/content/dam/science/cds/apod/apod/2026/july/galaxy1024.jpg",
+    hdurl: "https://assets.science.nasa.gov/content/dam/science/cds/apod/apod/2026/july/galaxy4096.jpg",
     thumbnailUrl: null,
     copyright: "Jane Astronomer",
     formattedDate: "Jul 28, 2026",
@@ -33,9 +33,9 @@ describe("getApodImageNode", () => {
   it("prefers hdurl as contentUrl and keeps url as the displayed image", () => {
     const node = getApodImageNode(makeEntry());
 
-    expect(node.url).toBe("https://apod.nasa.gov/apod/image/2607/galaxy1024.jpg");
+    expect(node.url).toBe("https://assets.science.nasa.gov/content/dam/science/cds/apod/apod/2026/july/galaxy1024.jpg");
     expect(node.contentUrl).toBe(
-      "https://apod.nasa.gov/apod/image/2607/galaxy4096.jpg",
+      "https://assets.science.nasa.gov/content/dam/science/cds/apod/apod/2026/july/galaxy4096.jpg",
     );
   });
 
@@ -119,11 +119,11 @@ describe("getApodVideoNode", () => {
 
   it("treats a direct media file as a contentUrl", () => {
     const node = getApodVideoNode(
-      videoEntry("https://apod.nasa.gov/apod/video/clip.mp4"),
+      videoEntry("https://assets.science.nasa.gov/content/dam/science/cds/apod/apod/2026/july/clip.mp4"),
       SITE,
     );
 
-    expect(node.contentUrl).toBe("https://apod.nasa.gov/apod/video/clip.mp4");
+    expect(node.contentUrl).toBe("https://assets.science.nasa.gov/content/dam/science/cds/apod/apod/2026/july/clip.mp4");
     expect(node).not.toHaveProperty("embedUrl");
   });
 
@@ -190,7 +190,7 @@ describe("getApodListItems", () => {
     const [item] = getApodListItems([makeEntry()], SITE);
 
     expect(item?.image).toBe(
-      "https://apod.nasa.gov/apod/image/2607/galaxy1024.jpg",
+      "https://assets.science.nasa.gov/content/dam/science/cds/apod/apod/2026/july/galaxy1024.jpg",
     );
   });
 

@@ -29,7 +29,6 @@ export default defineNuxtConfig({
   ssr: true,
 
   runtimeConfig: {
-    nasaApiKey: "",
     public: {
       siteName: site.name,
       siteDescription: site.description,

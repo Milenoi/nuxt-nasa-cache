@@ -1,9 +1,9 @@
 import type { ApodEntry } from "#shared/types";
 
 // The size every social crawler asks for. Routing the NASA asset through the
-// image pipeline into exactly this box is what makes the numbers honest: NASA
-// sends no dimensions and the server-side probe returns null in production, so
-// linking the file directly would mean guessing og:image:width/height.
+// image pipeline into exactly this box is what makes the numbers honest: not
+// every entry's CDN URL carries its size and the server-side probe returns null
+// in production, so linking the file directly would mean guessing the size.
 export const OG_IMAGE_WIDTH = 1200;
 export const OG_IMAGE_HEIGHT = 630;
 
@@ -18,8 +18,8 @@ export function useApodOgImage(
   const { siteUrl, socialImageAlt } = useRuntimeConfig().public;
   const img = useImage();
 
-  // A video `url` is a player, not an image, so NASA's thumbnail stands in.
-  // Its self-hosted .mp4s carry none, those keep the static card.
+  // A video `url` is a player, not an image, so NASA's snapshot stands in.
+  // Videos without one keep the static card.
   const source = computed(() => {
     const value = toValue(entry);
     if (!value) return null;

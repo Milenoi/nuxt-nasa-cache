@@ -2,7 +2,7 @@ const shared = {
   quality: 80,
   format: ["avif", "webp"],
   // Allowlist for transforming remote images (also mirrored in netlify.toml).
-  domains: ["apod.nasa.gov", "img.youtube.com", "i.ytimg.com"],
+  domains: ["assets.science.nasa.gov", "img.youtube.com", "i.ytimg.com"],
   // Tailwind's breakpoints minus 1px, so a `sizes` prop can be written in the
   // units the layout is built in: `lg:` here covers exactly the viewports where
   // Tailwind's `lg:` classes apply. The -1 is not a typo, Nuxt Image emits

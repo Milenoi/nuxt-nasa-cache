@@ -23,7 +23,8 @@ const rawImage = (date: string): ApodApiEntry => ({
     title: `Picture ${date}`,
     explanation: "An explanation.",
     media_type: "image",
-    url: `https://apod.nasa.gov/${date}.jpg`,
+    permalink: `https://science.nasa.gov/image-article/apod-${date}/`,
+    basic_html: `<IMG SRC="https://assets.science.nasa.gov/${date}.jpg">`,
 });
 
 // A fully-formed domain entry, for pre-seeding the cache (video -> skips probe).

@@ -30,7 +30,7 @@ describe("getApodEmbed", () => {
 
   describe("file", () => {
     it("classifies a direct mp4", () => {
-      const url = "https://apod.nasa.gov/apod/image/2607/Auroras_Esa.mp4";
+      const url = "https://assets.science.nasa.gov/content/dam/science/cds/apod/apod/2026/july/Auroras_Esa.mp4";
       expect(getApodEmbed(url)).toEqual({ type: "file", src: url });
     });
 

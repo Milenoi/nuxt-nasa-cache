@@ -32,9 +32,9 @@ export function useApodHero(latestApod: Ref<ApodEntry | null>) {
     return entry.thumbnailUrl ?? "/images/apod.jpg";
   });
 
-  // Poster only when NASA actually provides a thumbnail. Its self-hosted .mp4s
-  // carry none, so we skip the poster (a generic fallback photo would flash) and
-  // let the video paint its own frame; a real thumbnail is sized via the pipeline.
+  // Poster only when NASA actually provides a snapshot. Without one we skip the
+  // poster (a generic fallback photo would flash) and let the video paint its own
+  // frame; a real snapshot is sized via the pipeline.
   const heroVideoPoster = computed(() => {
     const thumb = latestApod.value?.thumbnailUrl;
     return thumb

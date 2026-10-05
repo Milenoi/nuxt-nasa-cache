@@ -4,7 +4,7 @@ import type { ApodEmbed } from "#shared/types";
  * Classify an APOD video URL so the detail view can pick the right player.
  *
  * APOD video entries are either an embeddable provider URL (YouTube/Vimeo) or a
- * direct media file hosted on apod.nasa.gov.
+ * direct media file hosted on assets.science.nasa.gov.
  *
  * @param {string} url - the APOD `url` field of a video entry
  * @return {ApodEmbed} the resolved embed type and source

@@ -43,7 +43,30 @@ Each layer only asks the next when it is empty and fills itself on the way back,
 so a request stops at the first warm layer. The response carries a `_source`
 (`nitro` / `redis` / `nasa`) that drives the cache badges. NASA is validated with
 Zod at the boundary and a failed response is never cached. The browser **never**
-talks to NASA directly, so the API key stays server-side.
+talks to NASA directly.
+
+### Data source
+
+The origin is NASA's `apod-basic` endpoint on science.nasa.gov
+(`https://science.nasa.gov/wp-json/wp/v2/apod-basic`), which needs no API key.
+APOD moved from apod.nasa.gov to science.nasa.gov at the end of September 2026.
+Since then the legacy `api.nasa.gov/planetary/apod` still answers with HTTP 200,
+but returns the NASA logo titled "NASA Science" for every date
+([nasa/apod-api#184](https://github.com/nasa/apod-api/issues/184)).
+
+The new endpoint is not a drop-in replacement, `server/apod/mapper.ts` bridges
+the differences:
+
+- `url` is the article link, not the media. The image, video file or YouTube
+  embed is read from the `basic_html` markup, `hdurl` is the full-size image.
+- Text fields are HTML. Title, explanation and credit are cleaned to plain
+  text, and the notes after the explanation ("Tomorrow's picture") are dropped.
+- Entries without a featured image of their own carry a generic NASA
+  placeholder as `hdurl`, which is ignored.
+- The image CDN encodes the original size as `?w=&h=`, so most images need no
+  probing.
+- Dates are `yymmdd` (`/261004`, `?date_from=` / `?date_to=`), and a page holds
+  at most 25 entries, so the 60-day list takes three requests.
 
 ### The cache chain
 
@@ -59,8 +82,8 @@ Each layer caches a **different** thing, this is the core lesson of the project:
    revalidates in the background, no request waits.
 3. **Redis (server):** the persistent, shared cache-aside store (24h TTL), read
    by every visitor. Nitro falls through to Redis on a miss.
-4. **NASA APOD API (origin):** rate-limited and slow, hit only when every cache
-   above is empty.
+4. **NASA APOD API (origin):** slow (the list takes three paginated requests),
+   hit only when every cache above is empty.
 
 Separately, the **image files** ride the browser HTTP cache + Netlify Image CDN,
 Vue Query never stores image binaries, which is why images have their own "slow
@@ -97,7 +120,7 @@ Images are optimized responsively with `@nuxt/image`:
   which generates AVIF/WebP variants on the fly at the edge.
 
 The dev/prod switch lives in `app/utils/getImageConfig.ts`. Remote image domains
-(`apod.nasa.gov`, YouTube thumbnails) are allowlisted in **both** the Nuxt image
+(`assets.science.nasa.gov`, YouTube thumbnails) are allowlisted in **both** the Nuxt image
 config **and** `netlify.toml` (`remote_images`).
 
 Two rules keep the responsive part honest, because getting either wrong makes
@@ -165,7 +188,7 @@ server/apod/
   mapper.ts            # pure: normalize, date range, cache keys
   usecases.ts          # loadApodList / loadApodDetail, talk only to the ports
   redisCache.ts        # CachePort  → Redis (useStorage)
-  nasaSource.ts        # ApodSourcePort → NASA ($fetch + Zod)
+  nasaSource.ts        # ApodSourcePort → NASA apod-basic ($fetch + Zod, paginated)
   imageProbe.ts        # MediaProbePort → image dimension probing
 ```
 
@@ -198,7 +221,6 @@ yarn install
 Create a `.env` in the project root:
 
 ```bash
-NUXT_NASA_API_KEY=YOUR_NASA_API_KEY        # https://api.nasa.gov/
 NUXT_REDIS_HOST=YOUR_REDIS_HOST            # https://redis.io/try-free/
 NUXT_REDIS_PORT=YOUR_REDIS_PORT
 NUXT_REDIS_USERNAME=YOUR_REDIS_USERNAME    # usually "default"

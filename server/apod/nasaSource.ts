@@ -1,24 +1,42 @@
-import type {ZodType} from "zod";
 import type {ApodSourcePort} from "#server/apod/ports";
+import type {ApodApiEntry} from "#server/utils/apodSchema";
 import getApodApi from "#server/utils/getApodApi";
 import {ApodApiEntrySchema, ApodApiListSchema} from "#server/utils/apodSchema";
 
-// Fetch from NASA and validate with Zod; turn any upstream/validation failure
-// into a clean HTTP error, so a bad response never reaches the cache.
-const fetchFromNasa = async <T>(url: string, schema: ZodType<T>): Promise<T> => {
+// Turn any upstream/validation failure into a clean HTTP error, so a bad
+// response never reaches the cache.
+const toNasaError = (error: unknown) =>
+    createError({
+        statusCode: (error as { status?: number }).status ?? 502,
+        statusMessage: "Failed to fetch or validate data from the NASA APOD API.",
+    });
+
+const fetchDetail = async (date: string): Promise<ApodApiEntry> => {
     try {
-        return schema.parse(await $fetch(url));
+        return ApodApiEntrySchema.parse(await $fetch(getApodApi({date})));
     } catch (error) {
-        const status = (error as { status?: number }).status ?? 502;
-        throw createError({
-            statusCode: status,
-            statusMessage: "Failed to fetch or validate data from the NASA APOD API.",
-        });
+        throw toNasaError(error);
     }
 };
 
-export const nasaApodSource: ApodSourcePort = {
-    fetchDetail: (date) => fetchFromNasa(getApodApi({date}), ApodApiEntrySchema),
-    fetchList: (start, end) =>
-        fetchFromNasa(getApodApi({startDate: start, endDate: end}), ApodApiListSchema),
+// The endpoint caps a page at 25 entries. The first page reports the page
+// count, the rest are fetched in parallel.
+const fetchList = async (start: string, end: string): Promise<ApodApiEntry[]> => {
+    try {
+        const range = {startDate: start, endDate: end};
+        const first = await $fetch.raw(getApodApi(range));
+        const totalPages = Number(first.headers.get("x-wp-totalpages") ?? 1);
+
+        const rest = await Promise.all(
+            Array.from({length: totalPages - 1}, (_, i) =>
+                $fetch(getApodApi({...range, page: i + 2})),
+            ),
+        );
+
+        return [first._data, ...rest].flatMap((page) => ApodApiListSchema.parse(page));
+    } catch (error) {
+        throw toNasaError(error);
+    }
 };
+
+export const nasaApodSource: ApodSourcePort = {fetchDetail, fetchList};

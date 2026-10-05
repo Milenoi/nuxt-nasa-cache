@@ -1,28 +1,24 @@
 import type { ApodQueryParams } from "#shared/types";
 
-const APOD_BASE = "https://api.nasa.gov/planetary/apod";
+// The legacy api.nasa.gov/planetary/apod scraper broke when APOD moved to
+// science.nasa.gov (Sept 2026) and now returns the NASA logo for every date.
+const APOD_BASE = "https://science.nasa.gov/wp-json/wp/v2/apod-basic";
 
-/**
- * Build the NASA APOD (Astronomy Picture of the Day) request URL.
- *
- * Pass `date` for a single day (detail view) or `startDate`/`endDate` for a
- * range (list view). `thumbs=true` makes the API return a thumbnail_url for
- * video entries.
- *
- * @param {ApodQueryParams} params - date or date range to request
- * @return {string} the fully qualified APOD API URL
- */
+// The endpoint ignores larger values and silently returns 25.
+export const APOD_PAGE_SIZE = 25;
+
+// "2026-10-04" -> "261004", the only date format the endpoint accepts.
+const toApodDate = (isoDate: string): string => isoDate.slice(2).replaceAll("-", "");
+
+// A range is paginated by the endpoint, so the caller walks it with `page`.
 const getApodApi = (params: ApodQueryParams = {}): string => {
-  const config = useRuntimeConfig();
+  if (params.date) return `${APOD_BASE}/${toApodDate(params.date)}`;
 
-  const search = new URLSearchParams({
-    api_key: config.nasaApiKey,
-    thumbs: "true",
-  });
+  const search = new URLSearchParams({ per_page: String(APOD_PAGE_SIZE) });
 
-  if (params.date) search.set("date", params.date);
-  if (params.startDate) search.set("start_date", params.startDate);
-  if (params.endDate) search.set("end_date", params.endDate);
+  if (params.startDate) search.set("date_from", toApodDate(params.startDate));
+  if (params.endDate) search.set("date_to", toApodDate(params.endDate));
+  if (params.page) search.set("page", String(params.page));
 
   return `${APOD_BASE}?${search.toString()}`;
 };

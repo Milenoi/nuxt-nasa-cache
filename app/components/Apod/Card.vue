@@ -87,9 +87,9 @@ const imageSrc = computed(() =>
         loading="lazy"
         class="h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110"
       />
-      <!-- Video without a NASA thumbnail (NASA only returns thumbnail_url for
-           embedded videos, not its self-hosted .mp4 files): render the video and
-           seek to a representative frame (see seekToPreviewFrame) as the preview.
+      <!-- Video without a NASA snapshot (some days only carry NASA's generic
+           placeholder, which the mapper drops): render the video and seek to a
+           representative frame (see seekToPreviewFrame) as the preview.
            A dark gradient backs it while that frame loads / if none renders. -->
       <video
         v-else-if="isVideo"

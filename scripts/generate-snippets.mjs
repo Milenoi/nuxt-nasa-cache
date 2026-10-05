@@ -82,18 +82,18 @@ export const loadApodDetail = async (date: string, deps: ApodDeps) => {
   {
     key: "nasa",
     file: "server/apod/nasaSource.ts",
-    code: `// The origin: NASA's APOD API, rate-limited and slow, so it is the last
-// resort. The response is validated before anything downstream trusts it.
-const fetchFromNasa = async <T>(url: string, schema: ZodType<T>): Promise<T> => {
+    code: `// The origin: NASA's APOD endpoint, slow (the list takes three paginated
+// requests), so it is the last resort. The response is validated before
+// anything downstream trusts it.
+const fetchDetail = async (date: string): Promise<ApodApiEntry> => {
   try {
     // Zod validates the upstream shape; a mismatch throws instead of
     // silently caching bad data.
-    return schema.parse(await $fetch(url));
+    return ApodApiEntrySchema.parse(await $fetch(getApodApi({ date })));
   } catch (error) {
-    const status = (error as { status?: number }).status ?? 502;
     // A failed response is never cached, so a transient outage can't poison
     // the cache.
-    throw createError({ statusCode: status, statusMessage: "…" });
+    throw toNasaError(error);
   }
 };`,
   },

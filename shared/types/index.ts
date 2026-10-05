@@ -10,6 +10,7 @@ export interface ApodQueryParams {
     date?: string;
     startDate?: string;
     endDate?: string;
+    page?: number;
 }
 
 export type ApodMediaType = "image" | "video" | "other";

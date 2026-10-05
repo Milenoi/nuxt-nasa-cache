@@ -27,10 +27,10 @@ function getApodEntryUrl(entry: ApodEntry, siteUrl: string): string {
  *
  * Prefers `hdurl` as `contentUrl` (that is the full-resolution original) and
  * keeps `url` as the displayed representation. `width`/`height` are only set
- * when the server-side probe actually resolved them.
+ * when the size is known (from the image CDN URL or the probe).
  *
  * Takes no site URL: every field of an ImageObject points at the media itself,
- * which is hosted on apod.nasa.gov.
+ * which is hosted on assets.science.nasa.gov.
  *
  * @param {ApodEntry} entry - a normalized APOD entry with `mediaType: "image"`
  * @return {Record<string, unknown>} the ImageObject properties

@@ -6,7 +6,7 @@
 
 [images]
   remote_images = [
-    'https://apod.nasa.gov/.*',
+    'https://assets.science.nasa.gov/.*',
     'https://img.youtube.com/.*',
     'https://i.ytimg.com/.*'
   ]
