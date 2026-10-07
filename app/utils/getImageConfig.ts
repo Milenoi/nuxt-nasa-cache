@@ -3,21 +3,19 @@ const shared = {
   format: ["avif", "webp"],
   // Allowlist for transforming remote images (also mirrored in netlify.toml).
   domains: ["assets.science.nasa.gov", "img.youtube.com", "i.ytimg.com"],
-  // Tailwind's breakpoints minus 1px, so a `sizes` prop can be written in the
-  // units the layout is built in: `lg:` here covers exactly the viewports where
-  // Tailwind's `lg:` classes apply. The -1 is not a typo, Nuxt Image emits
-  // `(max-width: <screen>)` while Tailwind uses `(min-width: <bp>)`, so a plain
-  // 1024 would still serve the md width at exactly 1024px wide.
-  // Any other ladder silently shifts every media query in every `sizes`
-  // attribute: `lg:` resolving to 1600 instead of 1024 is what made phones
-  // download the desktop-sized image. The page is capped at 1920, so no image
-  // ever needs to be wider than that.
+  // Exactly Tailwind's breakpoints, so `lg:` in a `sizes` prop covers the same
+  // viewports as Tailwind's `lg:` classes. Since @nuxt/image 2.1 the module emits
+  // `(max-width: <screen - 1>px)` itself; the old hand-made -1 here would now be
+  // subtracted twice. Any other ladder silently shifts every media query in every
+  // `sizes` attribute: `lg:` resolving to 1600 instead of 1024 is what made
+  // phones download the desktop-sized image. The page is capped at 1920, so no
+  // image ever needs to be wider than that.
   screens: {
-    sm: 639,
-    md: 767,
-    lg: 1023,
-    xl: 1279,
-    "2xl": 1535,
+    sm: 640,
+    md: 768,
+    lg: 1024,
+    xl: 1280,
+    "2xl": 1536,
   },
 };
 

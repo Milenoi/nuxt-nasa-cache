@@ -126,10 +126,10 @@ config **and** `netlify.toml` (`remote_images`).
 Two rules keep the responsive part honest, because getting either wrong makes
 every device download the widest variant:
 
-- The `screens` ladder is **Tailwind's breakpoints minus 1px**, Nuxt Image emits
-  `(max-width: …)` where Tailwind uses `(min-width: …)`, so a plain `1024` would
-  still serve the `md` width at exactly 1024px. With the offset, `lg:` in a
-  `sizes` prop covers exactly the viewports where Tailwind's `lg:` classes apply.
+- The `screens` ladder is **exactly Tailwind's breakpoints**. Nuxt Image emits
+  `(max-width: …)` where Tailwind uses `(min-width: …)` and, since version 2.1,
+  subtracts the 1px itself, so `lg:` in a `sizes` prop covers exactly the
+  viewports where Tailwind's `lg:` classes apply.
 - Every `<NuxtImg>` states an explicit **px width per breakpoint**, measured
   against the real layout (the gallery's column width, the detail page's media
   column). A bare `vw` value does not resolve against `screens` and collapses the
