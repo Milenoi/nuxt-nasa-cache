@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ArrowLeft, Pause, Play, Volume2, VolumeX } from "@lucide/vue";
+import { useElementSize, useWindowSize } from "@vueuse/core";
 import type { ApodEntry } from "#shared/types";
 
 // Copy comes from the shared content via the cache chain.
@@ -133,6 +134,17 @@ const imgHeight = computed(() => {
 
 const isImage = computed(() => item.value?.mediaType === "image");
 
+// The card sticks as early as it can while its last line still clears the fixed footer:
+// at its resting offset when it fits the screen, otherwise once its end comes into view.
+const CARD_REST_TOP = 148;
+const FOOTER_CLEARANCE = 80;
+const textCard = useTemplateRef<HTMLElement>("textCard");
+const { height: cardHeight } = useElementSize(textCard, undefined, { box: "border-box" });
+const { height: windowHeight } = useWindowSize();
+const cardTop = computed(() =>
+  Math.min(CARD_REST_TOP, windowHeight.value - cardHeight.value - FOOTER_CLEARANCE),
+);
+
 // At full row width anything narrower than 3:2 outgrows a laptop screen, and sticking it
 // would hide its lower edge. Unknown dimensions count as wide.
 const isWide = computed(() => {
@@ -228,7 +240,9 @@ const paragraphs = computed(() => {
           </figure>
 
           <article
-            class="relative z-10 mt-8 rounded-3xl border border-white/10 bg-background/40 p-7 shadow-2xl backdrop-blur-sm backdrop-saturate-150 md:p-12 lg:-mr-32 lg:mt-0 lg:w-2/5 lg:max-w-xl lg:shrink-0"
+            ref="textCard"
+            class="relative z-10 mt-8 rounded-3xl border border-white/10 bg-background/40 p-7 shadow-2xl backdrop-blur-sm backdrop-saturate-150 md:p-12 lg:sticky lg:top-(--card-top) lg:-mr-32 lg:mt-0 lg:w-2/5 lg:max-w-xl lg:shrink-0"
+            :style="{ '--card-top': `${cardTop}px` }"
           >
             <ApodDetailText
               :eyebrow="listPage?.title"
