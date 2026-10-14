@@ -150,25 +150,25 @@ const paragraphs = computed(() => {
       v-if="isImage"
       class="fixed inset-y-0 left-1/2 -z-10 w-full max-w-480 -translate-x-1/2 overflow-hidden"
     >
-      <!-- Mood only, the framed copy below carries the alt text. NASA originals can
+      <!-- Mood only, the copy in the card carries the alt text. NASA originals can
            time out the Netlify optimizer (502); the raw image has no such cap. -->
       <img
         v-if="rawImage"
         :src="item.hdurl || item.url"
         alt=""
-        class="size-full object-cover"
+        class="size-full scale-110 object-cover blur-xl"
       >
-      <!-- Fills the viewport, so the ladder follows the screen widths, never vw. -->
+      <!-- Blurred this far, a 320px render is enough at any screen size. -->
       <NuxtImg
         v-else
         :src="item.hdurl || item.url"
         alt=""
-        sizes="640px sm:768px md:1024px lg:1280px xl:1536px 2xl:1920px"
+        width="320"
         densities="x1"
         format="avif"
-        quality="80"
+        quality="60"
         fetchpriority="low"
-        class="size-full object-cover"
+        class="size-full scale-110 object-cover blur-xl"
         @error="rawImage = true"
       />
       <div class="absolute inset-0 bg-background/50" />
