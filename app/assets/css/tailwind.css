@@ -171,6 +171,8 @@
 
   --font-sans: var(--font-sans);
   --font-serif: var(--serif);
+
+  --animate-fade-up: fadeUp 0.4s ease;
 }
 
 @keyframes shimmer {

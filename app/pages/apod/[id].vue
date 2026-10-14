@@ -131,6 +131,17 @@ const imgHeight = computed(() => {
   return Math.round((RENDER_WIDTH * height) / width);
 });
 
+const isImage = computed(() => item.value?.mediaType === "image");
+
+// At full row width anything narrower than 3:2 outgrows a laptop screen, and sticking it
+// would hide its lower edge. Unknown dimensions count as wide.
+const isWide = computed(() => {
+  const { width, height } = item.value ?? {};
+  return !width || !height || width / height >= 1.5;
+});
+
+const dateLabel = computed(() => `${all.value?.fromLabel ?? ""} ${item.value?.formattedDate ?? ""}`.trim());
+
 // Flips to true if the optimized image errors (e.g. Netlify 502 on a huge, slow
 // NASA source); we then render the raw NASA image instead.
 const rawImage = ref(false);
@@ -149,187 +160,213 @@ const paragraphs = computed(() => {
 </script>
 
 <template>
-  <section
-    v-if="item"
-    class="container mx-auto min-h-screen px-5 pb-40 pt-32 md:px-8 [animation:fadeUp_0.4s_ease]"
-  >
-   <div class="text-left">
-    <NuxtLink
-      to="/apod"
-      class="mb-8 inline-flex items-center gap-2 text-sm text-text-muted transition-colors hover:text-foreground"
+  <div v-if="item" class="relative isolate">
+    <!-- Kept outside the animated section: its transform would shrink this fixed layer
+         to the section's box for the length of the fade. -->
+    <div
+      v-if="isImage"
+      class="fixed inset-y-0 left-1/2 -z-10 w-full max-w-480 -translate-x-1/2 overflow-hidden"
     >
-      <ArrowLeft class="h-4 w-4" />
-      {{ common?.backLabel }}
-    </NuxtLink>
-
-    <div class="mb-3 text-sm font-medium tracking-[0.01em] text-text-muted">
-      {{ listPage?.title }}
-    </div>
-    <h1
-      class="m-0 text-balance font-serif text-[clamp(40px,4.6vw,56px)] font-normal leading-[1.08] tracking-tight"
-    >
-      {{ item.title }}
-    </h1>
-    <p class="mb-8 mt-3 text-sm text-text-faint">
-      {{ all?.fromLabel }} {{ item.formattedDate }}
-    </p>
-
-    <!-- Body: image (left) + narrow description column (right) on lg+ -->
-    <div class="mt-8 grid gap-8 text-left lg:grid-cols-[1fr_320px] lg:items-start">
-     <div>
-      <!-- Media -->
-      <div
-        class="relative overflow-hidden rounded-2xl border border-muted bg-surface-card"
-      >
-        <ApodCacheBadge
-        :server-source="serverSource"
-        class="absolute left-3 top-3 z-10"
+      <!-- A 64px render is enough once it is blurred this far. -->
+      <NuxtImg
+        v-if="!rawImage"
+        :src="item.hdurl || item.url"
+        alt=""
+        width="64"
+        densities="x1"
+        format="webp"
+        quality="50"
+        class="absolute inset-0 size-full scale-125 object-cover opacity-70 blur-3xl saturate-150"
       />
+      <div class="absolute inset-0 bg-linear-to-b from-background/60 via-background/40 to-background/80" />
+    </div>
 
-      <!-- Image: full natural-ratio width on mobile; fixed 3:2 (contain) only in
-           the 2-column layout, where a reserved box keeps the grid aligned. -->
-      <div v-if="item.mediaType === 'image'" class="w-full lg:aspect-[3/2]">
-        <!-- Some APOD originals are huge (6000px+) and NASA can be slow, so the
-             Netlify image optimizer times out (502). Fall back to the raw NASA
-             image on error, the browser has no such fetch cap. -->
-        <img
-          v-if="rawImage"
-          :src="item.hdurl || item.url"
-          :alt="item.title"
-          :width="RENDER_WIDTH"
-          :height="imgHeight"
-          class="block h-auto w-full lg:h-full lg:object-contain"
+  <section class="pb-40 animate-fade-up">
+    <div v-if="isImage" class="relative min-h-dvh">
+      <div class="container mx-auto px-5 pt-24 md:px-8">
+        <NuxtLink
+          to="/apod"
+          class="mb-8 inline-flex items-center gap-2 text-sm text-text-strong transition-colors hover:text-foreground"
         >
-        <!-- One px width per breakpoint, never a bare vw value, which does not
-             resolve against the screens config and collapses the srcset to a
-             single-candidate ladder (every device then pulls the widest image).
-             The widths follow this layout: full container width up to lg, then
-             the media column of the 2-column grid (container minus the 320px
-             text column and the gap), capped at 1120 by the 1536 container. -->
-        <NuxtImg
-          v-else
-          :src="item.hdurl || item.url"
-          :alt="item.title"
-          :width="RENDER_WIDTH"
-          :height="imgHeight"
-          sizes="600px sm:600px md:704px lg:608px xl:864px 2xl:1120px"
-          densities="x1"
-          format="avif"
-          quality="80"
-          :placeholder="[80, 53, 40, 6]"
-          class="block h-auto w-full lg:h-full lg:object-contain"
-          @error="rawImage = true"
-        />
-      </div>
+          <ArrowLeft class="h-4 w-4" />
+          {{ common?.backLabel }}
+        </NuxtLink>
 
-      <!-- Video: embeddable provider (YouTube / Vimeo), 16:9 reserved -->
-      <div
-        v-else-if="embed && (embed.type === 'youtube' || embed.type === 'vimeo')"
-        class="aspect-video w-full"
+        <!-- The card overlaps the picture so part of it shows blurred through the glass. -->
+        <div class="lg:flex lg:flex-row-reverse lg:items-start">
+          <!-- top-49 is the figure's resting offset, so it sticks without moving first. -->
+          <figure
+            class="my-0 w-full lg:mt-12 lg:min-w-0 lg:flex-1"
+            :class="isWide && 'lg:sticky lg:top-49'"
+          >
+            <!-- NASA originals can reach 6000px and time out the Netlify optimizer (502);
+                 the raw image has no such fetch cap. -->
+            <img
+              v-if="rawImage"
+              :src="item.hdurl || item.url"
+              :alt="item.title"
+              :width="RENDER_WIDTH"
+              :height="imgHeight"
+              class="h-auto w-full drop-shadow-2xl"
+            >
+            <!-- Rendered widths in px, never vw (collapses the srcset): container minus
+                 gutter; from lg the row minus the card plus its 8rem overlap. -->
+            <NuxtImg
+              v-else
+              :src="item.hdurl || item.url"
+              :alt="item.title"
+              :width="RENDER_WIDTH"
+              :height="imgHeight"
+              sizes="600px sm:600px md:704px lg:704px xl:858px 2xl:1024px"
+              densities="x1"
+              format="avif"
+              quality="80"
+              fetchpriority="high"
+              class="h-auto w-full drop-shadow-2xl"
+              @error="rawImage = true"
+            />
+          </figure>
+
+          <article
+            class="relative z-10 mt-8 rounded-3xl border border-white/10 bg-background/40 p-7 shadow-2xl backdrop-blur-sm backdrop-saturate-150 md:p-12 lg:-mr-32 lg:mt-0 lg:w-2/5 lg:max-w-xl lg:shrink-0"
+          >
+            <ApodDetailText
+              :eyebrow="listPage?.title"
+              :title="item.title"
+              :date-label="dateLabel"
+              :paragraphs="paragraphs"
+              :copyright="item.copyright"
+            >
+              <template #aside>
+                <ApodCacheBadge :server-source="serverSource" class="shrink-0" />
+              </template>
+            </ApodDetailText>
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div v-else class="container mx-auto px-5 pt-32 md:px-8">
+      <NuxtLink
+        to="/apod"
+        class="mb-8 inline-flex items-center gap-2 text-sm text-text-muted transition-colors hover:text-foreground"
       >
-        <iframe
-          :src="embed.src"
-          title="APOD video"
-          class="h-full w-full"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-        />
-      </div>
+        <ArrowLeft class="h-4 w-4" />
+        {{ common?.backLabel }}
+      </NuxtLink>
 
-      <!-- Video: direct media file. Autoplays muted (autoplay is only allowed
-           muted) and, as the page's main content, plays from the start. The
-           custom control bar sits BELOW the frame, not overlaid: a bottom overlay
-           would hide behind the fixed cache footer once scrolled into view. -->
-      <div v-else-if="embed && embed.type === 'file'">
-        <div class="aspect-video w-full">
-          <video
-            ref="detailVideo"
+      <div class="mx-auto max-w-5xl overflow-hidden rounded-2xl border border-muted bg-surface-card">
+
+        <!-- Video: embeddable provider (YouTube / Vimeo), 16:9 reserved -->
+        <div
+          v-if="embed && (embed.type === 'youtube' || embed.type === 'vimeo')"
+          class="aspect-video w-full"
+        >
+          <iframe
             :src="embed.src"
-            class="h-full w-full object-contain"
-            autoplay
-            muted
-            playsinline
-            @play="isPaused = false"
-            @pause="isPaused = true"
-            @loadedmetadata="duration = ($event.currentTarget as HTMLVideoElement).duration"
-            @durationchange="duration = ($event.currentTarget as HTMLVideoElement).duration"
-            @timeupdate="currentTime = ($event.currentTarget as HTMLVideoElement).currentTime"
-            @volumechange="videoMuted = ($event.currentTarget as HTMLVideoElement).muted"
+            title="APOD video"
+            class="h-full w-full"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
           />
         </div>
 
-        <div class="flex items-center gap-3 border-t border-muted px-3 py-2.5 text-white">
-          <button
-            type="button"
-            class="grid size-9 shrink-0 place-items-center rounded-full text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            :aria-label="isPaused ? all?.playLabel : all?.pauseLabel"
-            @click="togglePlay"
+        <!-- Muted because browsers only allow muted autoplay. Controls sit below the
+             frame: an overlay would hide behind the fixed cache footer. -->
+        <div v-else-if="embed && embed.type === 'file'">
+          <div class="aspect-video w-full">
+            <video
+              ref="detailVideo"
+              :src="embed.src"
+              class="h-full w-full object-contain"
+              autoplay
+              muted
+              playsinline
+              @play="isPaused = false"
+              @pause="isPaused = true"
+              @loadedmetadata="duration = ($event.currentTarget as HTMLVideoElement).duration"
+              @durationchange="duration = ($event.currentTarget as HTMLVideoElement).duration"
+              @timeupdate="currentTime = ($event.currentTarget as HTMLVideoElement).currentTime"
+              @volumechange="videoMuted = ($event.currentTarget as HTMLVideoElement).muted"
+            />
+          </div>
+
+          <div class="flex items-center gap-3 border-t border-muted px-3 py-2.5 text-white">
+            <button
+              type="button"
+              class="grid size-9 shrink-0 place-items-center rounded-full text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              :aria-label="isPaused ? all?.playLabel : all?.pauseLabel"
+              @click="togglePlay"
+            >
+              <Play v-if="isPaused" class="h-5 w-5 fill-white" />
+              <Pause v-else class="h-5 w-5 fill-white" />
+            </button>
+
+            <span class="w-10 shrink-0 text-right text-xs tabular-nums text-text-muted">
+              {{ formatMediaTime(currentTime) }}
+            </span>
+
+            <input
+              type="range"
+              min="0"
+              :max="duration || 0"
+              step="0.1"
+              :value="currentTime"
+              :aria-label="all?.seekLabel"
+              :aria-valuetext="`${formatMediaTime(currentTime)} / ${formatMediaTime(duration)}`"
+              class="flex-1 cursor-pointer accent-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              @input="onSeek"
+            >
+
+            <span class="w-10 shrink-0 text-xs tabular-nums text-text-muted">
+              {{ formatMediaTime(duration) }}
+            </span>
+
+            <button
+              type="button"
+              class="grid size-9 shrink-0 place-items-center rounded-full text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              :aria-label="videoMuted ? all?.unmuteLabel : all?.muteLabel"
+              :aria-pressed="!videoMuted"
+              @click="toggleMute"
+            >
+              <VolumeX v-if="videoMuted" class="h-5 w-5" />
+              <Volume2 v-else class="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+
+        <!-- Fallback: link out to the source -->
+        <div v-else class="p-8">
+          <a
+            :href="item.url"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 rounded-lg border border-white/16 bg-white/3 px-5 py-3 text-sm font-medium transition-colors hover:border-white/30 hover:bg-white/9"
           >
-            <Play v-if="isPaused" class="h-5 w-5 fill-white" />
-            <Pause v-else class="h-5 w-5 fill-white" />
-          </button>
-
-          <span class="w-10 shrink-0 text-right text-xs tabular-nums text-text-muted">
-            {{ formatMediaTime(currentTime) }}
-          </span>
-
-          <input
-            type="range"
-            min="0"
-            :max="duration || 0"
-            step="0.1"
-            :value="currentTime"
-            :aria-label="all?.seekLabel"
-            :aria-valuetext="`${formatMediaTime(currentTime)} / ${formatMediaTime(duration)}`"
-            class="flex-1 cursor-pointer accent-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            @input="onSeek"
-          >
-
-          <span class="w-10 shrink-0 text-xs tabular-nums text-text-muted">
-            {{ formatMediaTime(duration) }}
-          </span>
-
-          <button
-            type="button"
-            class="grid size-9 shrink-0 place-items-center rounded-full text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            :aria-label="videoMuted ? all?.unmuteLabel : all?.muteLabel"
-            :aria-pressed="!videoMuted"
-            @click="toggleMute"
-          >
-            <VolumeX v-if="videoMuted" class="h-5 w-5" />
-            <Volume2 v-else class="h-5 w-5" />
-          </button>
+            {{ all?.viewSourceLabel }} ↗
+          </a>
         </div>
       </div>
-
-      <!-- Fallback: link out to the source -->
-      <div v-else class="p-8">
-        <a
-          :href="item.url"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="inline-flex items-center gap-2 rounded-lg border border-white/16 bg-white/3 px-5 py-3 text-sm font-medium transition-colors hover:border-white/30 hover:bg-white/9"
-        >
-          {{ all?.viewSourceLabel }} ↗
-        </a>
-      </div>
-      </div>
-     </div>
-
-     <div class="space-y-4">
-       <p
-         v-for="(para, i) in paragraphs"
-         :key="i"
-         class="text-sm leading-relaxed text-text-secondary"
-       >
-         {{ para }}
-       </p>
-       <p v-if="item.copyright" class="pt-2 text-xs text-text-faint">
-         © {{ item.copyright }}
-       </p>
-     </div>
     </div>
-   </div>
+
+    <div v-if="!isImage" class="container mx-auto mt-10 px-5 md:px-8">
+      <article
+        class="mx-auto max-w-3xl rounded-3xl border border-white/10 bg-surface-glass p-7 shadow-2xl backdrop-blur-2xl backdrop-saturate-150 md:p-12"
+      >
+        <ApodDetailText
+          :eyebrow="listPage?.title"
+          :title="item.title"
+          :date-label="dateLabel"
+          :paragraphs="paragraphs"
+          :copyright="item.copyright"
+        >
+          <template #aside>
+            <ApodCacheBadge :server-source="serverSource" class="shrink-0" />
+          </template>
+        </ApodDetailText>
+      </article>
+    </div>
   </section>
+  </div>
 </template>
