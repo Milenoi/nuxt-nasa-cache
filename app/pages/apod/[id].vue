@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ArrowLeft, Pause, Play, Volume2, VolumeX } from "@lucide/vue";
-import { useElementSize, useWindowSize } from "@vueuse/core";
 import type { ApodEntry } from "#shared/types";
 
 // Copy comes from the shared content via the cache chain.
@@ -122,35 +121,7 @@ const formatMediaTime = (seconds: number): string => {
   return `${mins}:${secs.toString().padStart(2, "0")}`;
 };
 
-// Reserve the image's real aspect ratio to avoid layout shift. We request a
-// 1200px-wide render and derive a proportional height from the probed
-// dimensions; undefined (video/other/unknown) falls back to natural height.
-const RENDER_WIDTH = 1200;
-const imgHeight = computed(() => {
-  const { width, height } = item.value ?? {};
-  if (!width || !height) return undefined;
-  return Math.round((RENDER_WIDTH * height) / width);
-});
-
 const isImage = computed(() => item.value?.mediaType === "image");
-
-// The card sticks as early as it can while its last line still clears the fixed footer:
-// at its resting offset when it fits the screen, otherwise once its end comes into view.
-const CARD_REST_TOP = 148;
-const FOOTER_CLEARANCE = 80;
-const textCard = useTemplateRef<HTMLElement>("textCard");
-const { height: cardHeight } = useElementSize(textCard, undefined, { box: "border-box" });
-const { height: windowHeight } = useWindowSize();
-const cardTop = computed(() =>
-  Math.min(CARD_REST_TOP, windowHeight.value - cardHeight.value - FOOTER_CLEARANCE),
-);
-
-// At full row width anything narrower than 3:2 outgrows a laptop screen, and sticking it
-// would hide its lower edge. Unknown dimensions count as wide.
-const isWide = computed(() => {
-  const { width, height } = item.value ?? {};
-  return !width || !height || width / height >= 1.5;
-});
 
 const dateLabel = computed(() => `${all.value?.fromLabel ?? ""} ${item.value?.formattedDate ?? ""}`.trim());
 
@@ -179,18 +150,31 @@ const paragraphs = computed(() => {
       v-if="isImage"
       class="fixed inset-y-0 left-1/2 -z-10 w-full max-w-480 -translate-x-1/2 overflow-hidden"
     >
-      <!-- A 64px render is enough once it is blurred this far. -->
-      <NuxtImg
-        v-if="!rawImage"
+      <!-- Mood only, the framed copy below carries the alt text. NASA originals can
+           time out the Netlify optimizer (502); the raw image has no such cap. -->
+      <img
+        v-if="rawImage"
         :src="item.hdurl || item.url"
         alt=""
-        width="64"
+        class="size-full object-cover"
+      >
+      <!-- Fills the viewport, so the ladder follows the screen widths, never vw. -->
+      <NuxtImg
+        v-else
+        :src="item.hdurl || item.url"
+        alt=""
+        sizes="640px sm:768px md:1024px lg:1280px xl:1536px 2xl:1920px"
         densities="x1"
-        format="webp"
-        quality="50"
-        class="absolute inset-0 size-full scale-125 object-cover opacity-70 blur-3xl saturate-150"
+        format="avif"
+        quality="80"
+        fetchpriority="low"
+        class="size-full object-cover"
+        @error="rawImage = true"
       />
-      <div class="absolute inset-0 bg-linear-to-b from-background/60 via-background/40 to-background/80" />
+      <div class="absolute inset-0 bg-background/50" />
+      <!-- Keep the fixed header and cache footer legible over bright pictures. -->
+      <div class="absolute inset-x-0 top-0 h-40 bg-linear-to-b from-background/85 to-transparent" />
+      <div class="absolute inset-x-0 bottom-0 h-40 bg-linear-to-t from-background/85 to-transparent" />
     </div>
 
   <section class="pb-40 animate-fade-up">
@@ -204,59 +188,50 @@ const paragraphs = computed(() => {
           {{ common?.backLabel }}
         </NuxtLink>
 
-        <!-- The card overlaps the picture so part of it shows blurred through the glass. -->
-        <div class="lg:flex lg:flex-row-reverse lg:items-start">
-          <!-- top-49 is the figure's resting offset, so it sticks without moving first. -->
-          <figure
-            class="my-0 w-full lg:mt-12 lg:min-w-0 lg:flex-1"
-            :class="isWide && 'lg:sticky lg:top-49'"
+        <article
+          class="mx-auto max-w-3xl rounded-3xl border border-white/10 bg-background/40 p-7 shadow-2xl backdrop-blur-sm backdrop-saturate-150 md:p-12"
+        >
+          <ApodDetailText
+            :eyebrow="listPage?.title"
+            :title="item.title"
+            :date-label="dateLabel"
+            :paragraphs="paragraphs"
+            :copyright="item.copyright"
           >
-            <!-- NASA originals can reach 6000px and time out the Netlify optimizer (502);
-                 the raw image has no such fetch cap. -->
-            <img
-              v-if="rawImage"
-              :src="item.hdurl || item.url"
-              :alt="item.title"
-              :width="RENDER_WIDTH"
-              :height="imgHeight"
-              class="h-auto w-full drop-shadow-2xl"
-            >
-            <!-- Rendered widths in px, never vw (collapses the srcset): container minus
-                 gutter; from lg the row minus the card plus its 8rem overlap. -->
-            <NuxtImg
-              v-else
-              :src="item.hdurl || item.url"
-              :alt="item.title"
-              :width="RENDER_WIDTH"
-              :height="imgHeight"
-              sizes="600px sm:600px md:704px lg:704px xl:858px 2xl:1024px"
-              densities="x1"
-              format="avif"
-              quality="80"
-              fetchpriority="high"
-              class="h-auto w-full drop-shadow-2xl"
-              @error="rawImage = true"
-            />
-          </figure>
-
-          <article
-            ref="textCard"
-            class="relative z-10 mt-8 rounded-3xl border border-white/10 bg-background/40 p-7 shadow-2xl backdrop-blur-sm backdrop-saturate-150 md:p-12 lg:sticky lg:top-(--card-top) lg:-mr-32 lg:mt-0 lg:w-2/5 lg:max-w-xl lg:shrink-0"
-            :style="{ '--card-top': `${cardTop}px` }"
-          >
-            <ApodDetailText
-              :eyebrow="listPage?.title"
-              :title="item.title"
-              :date-label="dateLabel"
-              :paragraphs="paragraphs"
-              :copyright="item.copyright"
-            >
-              <template #aside>
-                <ApodCacheBadge :server-source="serverSource" class="shrink-0" />
-              </template>
-            </ApodDetailText>
-          </article>
-        </div>
+            <template #aside>
+              <ApodCacheBadge :server-source="serverSource" class="shrink-0" />
+            </template>
+            <template #media>
+              <!-- Mirrors the card padding (p-7 md:p-12) so the picture runs edge to edge. -->
+              <div class="-mx-7 mt-8 md:-mx-12">
+                <img
+                  v-if="rawImage"
+                  :src="item.hdurl || item.url"
+                  :alt="item.title"
+                  :width="item.width ?? undefined"
+                  :height="item.height ?? undefined"
+                  class="block h-auto w-full"
+                >
+                <!-- Card width in px, never vw: viewport minus gutter, 704 inside the md
+                     container, the full max-w-3xl card from lg. -->
+                <NuxtImg
+                  v-else
+                  :src="item.hdurl || item.url"
+                  :alt="item.title"
+                  :width="item.width ?? undefined"
+                  :height="item.height ?? undefined"
+                  sizes="600px md:704px lg:768px"
+                  densities="x1"
+                  format="avif"
+                  quality="80"
+                  fetchpriority="high"
+                  class="block h-auto w-full"
+                  @error="rawImage = true"
+                />
+              </div>
+            </template>
+          </ApodDetailText>
+        </article>
       </div>
     </div>
 

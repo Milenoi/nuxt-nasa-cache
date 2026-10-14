@@ -11,7 +11,7 @@ defineProps<{
 <template>
   <div>
     <div class="mb-3 flex items-start justify-between gap-4">
-      <span class="text-sm font-medium text-text-muted">{{ eyebrow }}</span>
+      <span class="text-sm font-medium text-text-secondary">{{ eyebrow }}</span>
       <slot name="aside" />
     </div>
     <h1
@@ -19,13 +19,13 @@ defineProps<{
     >
       {{ title }}
     </h1>
-    <p class="mt-3 text-sm text-text-faint">
+    <p class="mt-3 text-sm text-text-secondary">
       {{ dateLabel }}
     </p>
 
-    <div class="my-8 h-px bg-white/10" />
+    <slot name="media" />
 
-    <div class="space-y-5">
+    <div class="mt-8 space-y-5">
       <p
         v-for="(para, i) in paragraphs"
         :key="i"
