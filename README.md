@@ -114,7 +114,7 @@ unit-testable without Redis or NASA (see [Project structure](#project-structure)
 
 Images are optimized responsively with `@nuxt/image`:
 
-- **Development (`yarn dev`):** the built-in **IPX** optimizer, because
+- **Development (`npm run dev`):** the built-in **IPX** optimizer, because
   Netlify's `/.netlify/images` endpoint doesn't exist locally.
 - **Production (Netlify):** the **Netlify Image CDN** (`provider: "netlify"`),
   which generates AVIF/WebP variants on the fly at the edge.
@@ -213,7 +213,7 @@ server stays at the project root (not under `app/`).
 git clone git@github.com:Milenoi/nuxt-nasa-cache.git
 cd nuxt-nasa-cache
 nvm use          # switch to Node 24
-yarn install
+npm install
 ```
 
 ### Environment variables
@@ -233,20 +233,20 @@ NUXT_REDIS_PASSWORD=YOUR_REDIS_PASSWORD
 ### Development
 
 ```bash
-yarn dev         # http://localhost:3000
+npm run dev         # http://localhost:3000
 ```
 
 ## Scripts
 
 | Command | Purpose |
 | --- | --- |
-| `yarn dev` | Start the dev server |
-| `yarn build` | Production build |
-| `yarn generate` | Static generation |
-| `yarn preview` | Preview the production build locally |
-| `yarn lint` | ESLint (`eslint . --fix`) |
-| `yarn typecheck` | `nuxt typecheck` (vue-tsc, strict) |
-| `yarn test` | Vitest unit tests |
+| `npm run dev` | Start the dev server |
+| `npm run build` | Production build |
+| `npm run generate` | Static generation |
+| `npm run preview` | Preview the production build locally |
+| `npm run lint` | ESLint (`eslint . --fix`) |
+| `npm run typecheck` | `nuxt typecheck` (vue-tsc, strict) |
+| `npm test` | Vitest unit tests |
 
 Husky wires the checks into git: **pre-commit** runs ESLint on the staged files
 (lint-staged) plus the test suite, **pre-push** runs the project-wide typecheck,
@@ -254,7 +254,7 @@ which is too slow (~30s) for every commit. CI runs all of them again.
 
 ## Testing
 
-Unit tests run on **Vitest** (`yarn test`). The APOD **use-cases** are tested
+Unit tests run on **Vitest** (`npm test`). The APOD **use-cases** are tested
 against a Map-backed fake cache and a stub NASA source, no Redis or NASA needed
 covering cache hits, miss → backfill, the list's per-day pre-caching, and
 image-dimension probing. `getApodEmbed` is covered for its URL classification

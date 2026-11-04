@@ -7,19 +7,19 @@
   },
   "scripts": {
     "snippets": "node scripts/generate-snippets.mjs",
-    "build": "yarn snippets && nuxt build",
+    "build": "npm run snippets && nuxt build",
     "dev": "nuxt dev",
     "test": "vitest run",
     "test:watch": "vitest",
-    "generate": "yarn snippets && nuxt generate",
+    "generate": "npm run snippets && nuxt generate",
     "preview": "nuxt preview",
     "typecheck": "nuxt typecheck",
     "postinstall": "nuxt prepare",
     "prepare": "husky",
-    "lint": "yarn lint:eslint",
+    "lint": "npm run lint:eslint",
     "lint:eslint": "eslint . --fix",
-    "lint:fix": "yarn run lint:eslint",
-    "lint:staged": "yarn run lint:eslint"
+    "lint:fix": "npm run lint:eslint",
+    "lint:staged": "npm run lint:eslint"
   },
   "devDependencies": {
     "@nuxt/eslint": "^1.17.0",
@@ -62,6 +62,5 @@
     "unhead": "^3.4.2",
     "vue-sonner": "^2.0.9",
     "zod": "^4.6.7"
-  },
-  "packageManager": "yarn@4.1.0"
+  }
 }

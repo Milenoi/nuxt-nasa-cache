@@ -3,7 +3,7 @@
 // Curated, faithful excerpts of the real cache-chain code (one per layer) are
 // highlighted with Shiki here and written to app/assets/json/code-snippets.json as
 // ready-made HTML. The page renders that HTML directly, so Shiki never ships to
-// the client and there is no SSR cost. Re-run with `yarn snippets` whenever the
+// the client and there is no SSR cost. Re-run with `npm run snippets` whenever the
 // source excerpts below change (this also runs automatically before a build).
 
 import { writeFile, mkdir } from "node:fs/promises";

@@ -33,11 +33,4 @@ CLAUDE.md
 # Tooling caches
 .eslintcache
 
-# Yarn (Berry), keep releases/plugins, ignore local state & cache
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
 .playwright-mcp/

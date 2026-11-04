@@ -1,8 +1,8 @@
 # Run the unit tests before building, so a failing test blocks the deploy.
-# (`yarn build` runs `yarn snippets && nuxt build`; Nitro's Netlify preset is set
+# (`npm run build` runs `npm run snippets && nuxt build`; Nitro's Netlify preset is set
 # by Netlify's Nuxt detection via NITRO_PRESET, so the output is still picked up.)
 [build]
-  command = "yarn test && yarn build"
+  command = "npm test && npm run build"
 
 [images]
   remote_images = [
