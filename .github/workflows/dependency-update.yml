@@ -1,0 +1,64 @@
+name: Dependency update
+
+# Daily in-range updates (patch and minor). .npmrc keeps releases younger than three
+# days out. Majors are left to the daily report on the Mac.
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dependency-update
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    env:
+      HUSKY: 0
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Update within ranges
+        id: update
+        run: |
+          npm update
+          if git diff --quiet package.json package-lock.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Lint
+        if: steps.update.outputs.changed == 'true'
+        run: npx eslint .
+      - name: Typecheck
+        if: steps.update.outputs.changed == 'true'
+        run: npm run typecheck
+      - name: Test
+        if: steps.update.outputs.changed == 'true'
+        run: npm test
+      - name: Build
+        if: steps.update.outputs.changed == 'true'
+        run: npm run build
+
+      - name: Commit and push
+        if: steps.update.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "chore(deps): update dependencies within their ranges"
+          git push origin HEAD:main
+
